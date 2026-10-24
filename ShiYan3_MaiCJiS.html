@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light"><meta name="description" content="实验三·脉冲计数：基于原始C51代码及Proteus截图的8051离线交互学习讲义。">
+<title>实验三 · 脉冲计数 / 构成主义 8051 学习实验室</title>
+<meta name="theme-color" content="#171717">
+<style>
+/* A3-beta · N3 · T3 · M3 / one coherent, offline design system */
+:root{--red:#C52C22;--ink:#171717;--bg:#F0E6D3;--paper:#FFF9ED;--muted:#62594E;--line:#c5bba9;--blue:var(--red);--green:#31573c;--code:#171717;--nav:72px;--mono:Consolas,"SFMono-Regular",Menlo,Monaco,"Liberation Mono",monospace;--reading:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;--display:"Arial Black",Impact,"Helvetica Neue",var(--reading)}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding:24px 0 100px}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.85 var(--reading)}button,input,select,textarea{font:inherit}button,a,summary{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.45;cursor:default}button,a,summary,input,select,textarea,[tabindex]{-webkit-tap-highlight-color:transparent}button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--red);outline-offset:4px}button:focus-visible{box-shadow:0 0 0 2px var(--paper)}[hidden],.hidden{display:none!important}p{margin:.6em 0 1.1em}h1,h2,h3,h4{line-height:1.4;margin:0 0 .65em;letter-spacing:-.025em}h2,h3{font-weight:850}h3{font-size:25px}h4{font-size:18px}small,.small{font-size:13px;color:var(--muted)}a,.linkbtn{color:var(--red);text-underline-offset:4px}code,pre,.mono{font-family:var(--mono)}code{font-size:.92em;padding:2px 5px;background:#e8ddc8;overflow-wrap:anywhere}pre{background:var(--code);color:var(--paper);padding:22px;overflow:auto;font:14px/1.9 var(--mono);tab-size:4}pre code{background:none;padding:0;overflow-wrap:normal}table{width:100%;border-collapse:collapse;font-size:15px}th,td{text-align:left;padding:16px 18px;border-bottom:1px solid var(--line);vertical-align:top}th{background:var(--ink);color:var(--paper);font-weight:700}.table-wrap{overflow-x:auto;max-width:100%}.btn{border:1.5px solid var(--ink);border-radius:0;min-height:44px;padding:8px 14px;background:var(--paper);color:var(--ink);font-size:14px;font-weight:650;line-height:1.5}.btn:hover{background:var(--ink);color:var(--paper)}.btn.primary,.btn.on{background:var(--red);color:var(--paper);border-color:var(--red)}.btn.on:before{content:'✓ ';font-weight:900}.linkbtn{border:0;border-bottom:1px solid currentColor;background:none;text-align:left;min-height:44px;font-size:14px;padding:6px 0;font-weight:650}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}.spread{justify-content:space-between}.tag{display:inline-block;padding:5px 9px;border:1px solid currentColor;font:11px/1.5 var(--mono);letter-spacing:.035em;color:var(--muted)}.eyebrow,.info-label{font:11px/1.65 var(--mono);letter-spacing:.1em;color:var(--red);display:block;margin-bottom:12px}.muted{color:var(--muted)}.note{background:#e7dbc5;border-left:6px solid var(--red);margin:24px 0;padding:20px 24px;font-size:15px}.note.warn{border-left-color:var(--ink);background:#e7dcc9}.note.good{background:#e3e2cc;border-left-color:var(--green)}.card{background:var(--paper);border-top:3px solid var(--ink);padding:28px;min-width:0;max-width:100%}.card+.card{margin-top:24px}.subheading{display:grid;grid-template-columns:75px minmax(0,1fr);gap:18px;align-items:baseline;margin:60px 0 22px;padding:20px 0 0;border-top:8px solid var(--ink)}.subheading .index{font:700 18px var(--mono);color:var(--red)}.subheading h3{font-size:32px;margin:0}.twocol{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:26px}.twocol>.card+.card{margin:0}.reading{max-width:860px}.section-intro{max-width:960px;font-size:16px;line-height:1.9;margin:26px 0}.module>.section-intro:before{content:'摘要 / ';color:var(--red);font:700 12px var(--mono)}details{border-top:1px solid var(--line);margin-top:18px}summary{cursor:pointer;min-height:48px;padding:11px 0;font-weight:650;font-size:15px}details[open]>summary{color:var(--red)}details>div{padding:4px 0 18px}details p:last-child{margin-bottom:0}
+/* N3: the rail never changes the available reading width. */
+.sidebar{overflow-y:auto;scrollbar-width:none;position:fixed;inset:0 auto 0 0;z-index:45;width:var(--nav);background:var(--ink);color:var(--paper);display:flex;flex-direction:column;align-items:stretch;border-right:1px solid #4b443d}.brandmark{height:70px;display:grid;place-items:center;font:900 31px var(--display);color:var(--paper);text-decoration:none;border-bottom:1px solid #655d52}.rail-menu,.rail-top{border:0;background:none;color:var(--paper);min-height:64px;padding:8px 0;font-size:12px;font-weight:700}.rail-menu span{display:block;font-size:25px;line-height:1}.sidebar nav{display:grid;margin-top:20px}.navbtn{min-height:69px;border:0;border-left:5px solid transparent;background:none;color:#c6bcaa;font:800 24px var(--mono);padding:0 5px 0 0}.navbtn span{display:none}.navbtn.active{border-left-color:var(--paper);background:var(--red);color:var(--paper)}.navbtn:hover{color:#fff;background:#3a302a}.rail-word{writing-mode:vertical-rl;margin:30px auto 20px;font:11px var(--mono);letter-spacing:.18em;color:#c6bcaa}.rail-top{margin-top:auto;border-top:1px solid #655d52}.main{margin-left:var(--nav);padding:0 38px 65px;min-width:0}.topbar{min-height:58px;border-bottom:2px solid var(--ink);display:flex;justify-content:space-between;align-items:center;gap:20px;font:11px/1.6 var(--mono);letter-spacing:.06em}.topbar .btn{min-height:36px;font-size:12px;padding:5px 10px}.hero{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:20px 0}.hero h1{font-size:18px;font-weight:800;margin:0}.hero h1 span{color:var(--red)}.hero p{font-size:11px;margin:3px 0 0;color:var(--muted)}.hero .eyebrow{display:none}.hero-side{display:flex;gap:28px}.stat{display:flex;gap:7px;align-items:baseline}.stat strong{font:800 24px var(--mono)}.stat small{font-size:10px}.module{min-width:0}.module-header{position:relative;isolation:isolate;display:grid;grid-template-columns:170px minmax(0,1fr) 200px;gap:24px;align-items:center;min-height:285px;padding:28px 30px;overflow:hidden;background:var(--ink);color:var(--paper)}.module-number{font:900 160px/.9 var(--display);letter-spacing:-.09em;color:var(--red);z-index:1}.module-heading{min-width:0;z-index:2}.module-heading .kicker{font:700 12px/1.6 var(--mono);letter-spacing:.13em;margin-bottom:15px}.module-header h2{font:900 clamp(44px,4.4vw,80px)/1.17 var(--display);letter-spacing:-.05em;margin:0;overflow-wrap:anywhere}.module-header .eyebrow{color:#ddd0b9;font-size:10px;margin:16px 0 0;letter-spacing:.09em}.chapter-art{position:relative;align-self:stretch;min-height:150px;display:grid;place-items:center;z-index:0}.art-type{font:900 82px/.9 var(--mono);letter-spacing:-.09em;position:relative;z-index:1}.art-rule{position:absolute;width:210px;height:47px;transform:rotate(-38deg);background:var(--red)}.chapter-art:before{content:'';position:absolute;width:146px;height:146px;border:16px solid var(--paper);border-radius:50%}.chapter-art:after{content:'';position:absolute;right:-50px;top:-80px;width:120px;height:370px;background:var(--red);transform:rotate(32deg);z-index:-1}.chapter-art small{position:absolute;bottom:0;right:0;font:10px var(--mono);letter-spacing:.08em}.module[data-style="draft"] .module-header{background:var(--paper);color:var(--ink);border:3px solid var(--ink);border-top:12px solid var(--red)}.module[data-style="draft"] .module-number{color:var(--ink)}.module[data-style="draft"] .module-header .eyebrow{color:var(--muted)}.module[data-style="draft"] .chapter-art:before{border:2px solid var(--ink);border-radius:0;width:150px;height:150px;transform:rotate(45deg)}.module[data-style="draft"] .art-rule{height:4px;background:var(--red);width:200px}.module[data-style="draft"] .chapter-art:after{background:none;border-left:1px solid var(--line);transform:none}.module[data-style="anatomy"] .module-header{background:var(--red)}.module[data-style="anatomy"] .module-number{color:var(--paper)}.module[data-style="anatomy"] .chapter-art:before{background:var(--ink);border:0;width:180px;height:180px}.module[data-style="anatomy"] .chapter-art:after{background:var(--ink);width:32px}.module[data-style="anatomy"] .art-rule{background:var(--paper);height:4px}.module[data-style="anatomy"] .module-header .eyebrow{color:var(--paper)}.module[data-style="data"] .module-header{background:var(--ink);border-bottom:14px solid var(--red)}.module[data-style="data"] .module-number{color:var(--paper);align-self:start}.module[data-style="data"] .chapter-art:before{border:0;border-radius:0;background:var(--red);width:175px;height:205px;transform:skewY(-12deg)}.module[data-style="data"] .art-type{font-size:64px;line-height:.85;letter-spacing:-.06em;overflow-wrap:anywhere;max-width:150px}.module[data-style="data"] .art-rule,.module[data-style="data"] .chapter-art:after{display:none}.module[data-style="exam"] .module-header{background:var(--paper);color:var(--ink);border-top:12px solid var(--ink);border-bottom:3px solid var(--ink)}.module[data-style="exam"] .module-header .eyebrow{color:var(--muted)}.module[data-style="exam"] .chapter-art:before{background:var(--red);border:0;border-radius:0;transform:rotate(-12deg);width:155px;height:180px}.module[data-style="exam"] .chapter-art:after{display:none}.module[data-style="exam"] .art-type{color:var(--paper)}.module[data-style="exam"] .art-rule{width:190px;height:6px;background:var(--ink)}.chapter-art{background-image:radial-gradient(#fff2 .6px,transparent .8px);background-size:5px 5px}.footer{border-top:5px solid var(--ink);padding-top:20px;margin-top:60px;font:11px/1.8 var(--mono);color:var(--muted);overflow-wrap:anywhere}
+/* Instruction archive: left 55 / right 45, no text transforms. */
+.code-grid{display:grid;grid-template-columns:minmax(0,1.22fr) minmax(0,1fr);gap:0;align-items:start;border:3px solid var(--ink)}.codebox{background:var(--code);min-width:0;overflow:hidden}.codebar{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #62594e;padding:16px 18px;color:#e0d4bf;font:12px var(--mono)}.codebar .btn{background:var(--ink);color:var(--paper);border-color:#9e8d78;font-size:12px;white-space:nowrap}.codebar .btn:hover{background:var(--red)}.code-scroll{position:relative;overflow:auto;max-height:620px;padding:24px 0;overscroll-behavior:contain}.code-line{display:flex;min-width:100%;width:max-content;font:14px/2.55 var(--mono);color:var(--paper);white-space:pre;cursor:pointer;border-left:5px solid transparent;padding-right:28px}.code-line:hover{background:#28231f}.code-line.selected{background:#3e241e;border-left-color:#ff6a56}.line-select{flex-shrink:0;width:49px;padding:0 12px 0 0;border:0;background:none;color:#b5a58e;font:12px var(--mono);text-align:right;min-height:36px}.code-line.selected .line-select{color:#fff;font-weight:900;background:var(--red)}.code-text{display:block}.tok{font:inherit;line-height:inherit;white-space:pre;padding:0;border:0;border-bottom:1px dotted #b6a48a;border-radius:0;background:none;color:inherit}.tok:hover{color:#fff;background:#5c3028}.tok.reg{color:#ffb69b}.tok.keyword{color:#f4d16e}.tok.num{color:#f5e2b8}.comment{color:#b7c7ac}.codefoot{border-top:1px solid #62594e;padding:16px 18px;color:#c1b59f;font:11px/1.8 var(--mono)}.codefoot .btn{display:none}.explain{position:sticky;top:20px;max-height:calc(100vh - 40px);overflow-y:auto;scrollbar-width:thin}.code-grid>.card{border-top:0;border-left:6px solid var(--red);padding:26px}.line-label{font:11px var(--mono);color:var(--red)}.explain h3{font:800 25px/1.5 var(--mono);margin:16px 0;overflow-wrap:anywhere}.explain h4{font-size:13px;color:var(--red);border-top:1px solid var(--line);margin:20px 0 7px;padding-top:8px}.explain p{font-size:16px;margin:.4em 0 .8em}.return-code{display:none}.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-left:1px solid var(--line);border-top:1px solid var(--line);margin:24px 0}.flow-node{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:20px;font-size:15px;background:var(--paper)}.flow-node strong{display:block;color:var(--red);font:11px var(--mono);margin-bottom:10px}.flow-node.current{background:var(--ink);color:var(--paper);box-shadow:inset 0 5px var(--red)}.flow-node.current strong{color:#ffb69b}.flow-node.current small{color:#d7c9b3}.flow-note{min-height:90px}
+/* Shared exact circuit; the graphic styling never touches its topology. */
+.circuit-viewport{position:relative;overflow:auto;width:100%;max-width:100%;min-width:0;max-height:78vh;background:var(--paper);border:2px solid var(--ink);touch-action:pan-x pan-y pinch-zoom;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}.circuit-viewport svg{display:block;max-width:none;user-select:none}.circuit-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}.circuit-toolbar .row{gap:6px;max-width:100%}.circuit-toolbar .btn{font-size:12px;padding:8px 12px}.schematic .wire{fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}.schematic .sym{fill:none;stroke:#792920;stroke-width:2.4}.schematic text{font-family:Arial,var(--reading);fill:var(--ink);font-size:15px}.schematic .chip{fill:#ebdfc8;stroke:var(--ink);stroke-width:2.4}.schematic .pin{stroke:var(--ink);stroke-width:2.2}.schematic .dot{fill:var(--ink)}.schematic .num{font-size:13px}.schematic .value{font-size:12px}.schematic [data-part]{cursor:pointer}.schematic [data-part]:hover .wire,.schematic [data-part].picked .wire,.schematic [data-part].picked .sym,.schematic [data-part].picked .pin{stroke:var(--red);stroke-width:4}.schematic [data-part].picked .chip{stroke:var(--red);stroke-width:5}.schematic [data-part]:focus-visible{outline:3px dashed var(--red);outline-offset:3px}.schematic .hit{stroke:transparent;stroke-width:18;fill:none;pointer-events:stroke}.schematic .led-disc{fill:#34201c}.circuit-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:28px;align-items:start}.circuit-grid>*,.twocol>*,.sim-grid>*{min-width:0;max-width:100%}.part-chooser{display:flex;gap:7px;flex-wrap:wrap;margin:26px 0}.part-chooser .btn{font-size:12px}.part-panel{border-top:10px solid var(--red);font-size:16px}.part-panel h3{font-size:32px;font-family:var(--display)}.circuit-hint{font-size:13px;margin:10px 0}.diagram-frame{border:3px solid var(--ink);border-top:0;padding:24px}.drawing-strip{display:flex;justify-content:space-between;border:3px solid var(--ink);background:var(--ink);color:var(--paper);padding:12px 22px;font:12px var(--mono);gap:10px}.drawing-strip strong{font-size:26px}.object-status{border-top:4px solid var(--red);padding:12px 0;font:12px var(--mono);display:flex;justify-content:space-between;align-items:center;gap:12px}.object-status .btn{font-size:12px}.select{border:1.5px solid var(--ink);border-radius:0;min-height:44px;padding:8px 12px;background:var(--paper);color:var(--ink);max-width:100%;font-size:15px}
+/* Precise data composition. */
+.register-tabs{display:flex;gap:0;flex-wrap:wrap;border-bottom:3px solid var(--ink);margin:-28px -28px 26px;padding:0;background:var(--ink)}.register-tabs .btn{flex:1;min-width:70px;color:var(--paper);background:var(--ink);border-color:#62594e;font:700 16px var(--mono);min-height:60px}.register-tabs .btn.on{background:var(--red)}.register-tabs .btn.on:before{content:''}.register-tabs .btn[aria-selected=true]{box-shadow:inset 0 -5px var(--paper)}#registerBody h3{font-size:30px}.reg-value{font:800 clamp(40px,5vw,74px)/1.25 var(--mono);color:var(--red);display:block;padding:12px 0}.reg-value small{font:13px/1.7 var(--mono);color:var(--muted);display:block}.bitscroll{max-width:100%;overflow:auto}.bitstrip{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:0;margin:22px 0;border:2px solid var(--ink);min-width:0}.bit{border:0;border-right:1px solid var(--ink);background:var(--paper);padding:10px 2px;min-width:0;text-align:center;border-radius:0;line-height:1.5}.bit:last-child{border-right:0}.bit .pos{display:block;font:11px var(--mono);color:var(--muted)}.bit .name{display:block;font:12px/2.5 var(--mono)}.bit .val{display:block;font:800 46px/1.2 var(--mono)}.bit.focused{background:var(--ink);color:var(--paper);box-shadow:inset 0 -7px var(--red)}.bit.focused .pos{color:#dbceb7}.bit-info{border-left:6px solid var(--red);padding:18px 22px;background:var(--bg);font-size:16px;min-height:130px}.derive{display:grid;grid-template-columns:52px minmax(0,1fr);gap:18px;padding:20px 0;border-bottom:1px solid var(--line)}.derive>b{font:900 38px/1 var(--mono);color:var(--red)}.derive p{margin:0}.sim-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:2px solid var(--ink);margin:24px 0}.sim-stat{background:var(--ink);color:var(--paper);padding:20px 16px;border-right:1px solid #7a6a57}.sim-stat:last-child{border:0}.sim-stat strong{display:block;font:700 clamp(26px,3vw,48px)/1.5 var(--mono);color:var(--paper)}.sim-stat span{font-size:12px;color:#ded1bb}.sim-stat:first-child{background:var(--red)}.sim-label{display:block;font-size:13px;color:var(--muted);margin-bottom:8px}.leds{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:0;border:1px solid var(--ink);margin:24px 0}.ledcell{text-align:center;border-right:1px solid var(--line);font:11px/1.9 var(--mono);padding:12px 2px}.ledcell:last-child{border:0}.ledlight{display:block;width:20px;height:20px;border:2px solid #766a58;background:#d6cbb6;border-radius:50%;margin:6px auto 10px}.ledlight.lit{background:var(--red);border-color:var(--ink);box-shadow:0 0 0 3px #e4b4a2}.sim-wave{width:100%;height:120px;display:block;background:var(--paper);border:1px solid var(--line)}.sim-wave text{font:10px var(--mono);fill:var(--muted)}.sim-wave .wavepath{fill:none;stroke:var(--red);stroke-width:2.4}.log{border-top:3px solid var(--ink);background:var(--bg);padding:20px;font-size:14px;min-height:110px;margin:20px 0}.sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.sim-field label{display:block;font-size:13px;margin-bottom:5px}.sim-field input{width:100%;max-width:220px;min-height:44px;padding:8px;border:1.5px solid var(--ink);border-radius:0;background:var(--paper)}
+/* Examination archive. */
+.qa-tools{display:flex;gap:10px;flex-wrap:wrap;margin:25px 0}.search{flex:1;min-width:180px;min-height:48px;padding:10px 14px;border:2px solid var(--ink);border-radius:0;background:var(--paper);font-size:16px}#qaCount{font:12px var(--mono);border-bottom:7px solid var(--ink);padding:10px 0 24px}.question{position:relative;border-bottom:3px solid var(--ink);padding:30px 0 28px;margin:0;background:transparent}.question h3{display:grid;grid-template-columns:120px minmax(0,1fr);gap:25px;align-items:baseline;font-size:25px;line-height:1.6;margin:0}.qnum{font:900 42px/1.2 var(--mono);color:var(--red);letter-spacing:-.08em}.qcategory{font:11px var(--mono);margin:8px 0 20px 145px;color:var(--muted)}.question details{margin:0 0 0 145px;background:var(--paper);padding:0 20px}.question summary{font-size:14px}.question details>div{font-size:16px}.question .short{border-left:5px solid var(--red);padding-left:18px;font-weight:650;color:var(--ink)}.follow{border-left:2px solid var(--ink);padding-left:18px;margin:18px 0}.follow strong{display:block}.empty-state{padding:30px;border:1px dashed var(--ink);text-align:center;color:var(--muted)}
+/* Dialogs, navigation issue, and motion preference. */
+.modal{width:min(800px,94vw);max-height:88vh;max-height:88dvh;border:3px solid var(--ink);border-radius:0;padding:0;color:var(--ink);background:var(--paper)}dialog::backdrop{background:#171717b8}.modal-head{position:sticky;top:0;z-index:1;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px}.modal-head h3{font-size:22px;margin:0}.modal-body{padding:28px;font-size:16px}.modal-body h4{margin-top:25px}.source-list{padding-left:22px}.source-list li{margin:20px 0}.checklist{padding:0;list-style:none}.checklist li{padding:10px 0;border-bottom:1px solid var(--line)}.checkmark{color:var(--green);font-weight:800;margin-right:10px}.status-uncertain{color:#79502c}.chapter-sheet{position:fixed;inset:0 auto 0 var(--nav);margin:0;width:410px;max-width:calc(100vw - var(--nav));height:100%;max-height:100%;border:0;border-right:5px solid var(--ink);border-radius:0;padding:0;background:var(--paper);color:var(--ink)}.chapter-sheet[open]{display:flex;flex-direction:column}.chapter-head{padding:24px 25px 18px;border-bottom:8px solid var(--ink);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-shrink:0}.chapter-head h3{font-size:42px;line-height:1.1;margin:4px 0 14px}.chapter-head p{font-size:12px;margin:0}.chapter-head .btn{font-size:12px;padding:7px}.contents-scroll{overflow:auto;overscroll-behavior:contain;flex:1;padding-bottom:20px}.contents-index{display:grid;padding:16px 24px}.contents-module{display:grid;grid-template-columns:43px minmax(0,1fr);gap:10px;align-items:center;background:var(--paper);color:var(--ink);border:0;border-bottom:1px solid var(--ink);text-align:left;min-height:56px;padding:12px 0;font-size:13px;font-weight:700}.contents-module b{font:900 27px var(--mono)}.contents-module[aria-current=page]{color:var(--red);border-bottom:4px solid var(--red)}.contents-label{margin:14px 24px 0;font:11px var(--mono);color:var(--muted);letter-spacing:.08em}.chapter-list{padding:8px 20px}.chapter-link{display:grid;grid-template-columns:25px minmax(0,1fr);gap:5px 10px;align-items:center;min-height:60px;width:100%;border:0;border-bottom:1px solid var(--line);background:var(--paper);color:var(--ink);padding:13px 6px;font-size:14px;line-height:1.5;text-align:left}.chapter-order{font:11px var(--mono);color:var(--muted)}.chapter-state{grid-column:2;font-size:10px;color:var(--muted)}.chapter-link[aria-current=location]{background:var(--ink);color:var(--paper);border-left:5px solid var(--red);padding-left:8px}.chapter-link[aria-current=location] .chapter-order,.chapter-link[aria-current=location] .chapter-state{color:#e5d4b8}.chapter-foot{padding:18px 24px calc(18px + env(safe-area-inset-bottom));border-top:3px solid var(--ink);flex-shrink:0;background:var(--bg);font-size:12px}.motion-control{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:750;min-height:44px}.motion-control input{appearance:none;width:24px;height:24px;background:var(--paper);border:2px solid var(--ink);margin:0;display:grid;place-items:center;flex-shrink:0}.motion-control input:checked{background:var(--red);border-color:var(--red)}.motion-control input:checked:after{content:'✓';font-size:17px;line-height:1;color:#fff}.motion-help{font-size:11px;color:var(--muted);margin:0 0 8px}.chapter-utilities{display:flex;gap:16px;flex-wrap:wrap}.chapter-utilities button{font-size:12px}.contents-open{overflow:hidden}.toast{position:fixed;z-index:100;left:50%;bottom:25px;transform:translateX(-50%);background:var(--ink);color:var(--paper);border-left:6px solid var(--red);padding:13px 20px;font-size:14px;max-width:90vw}.mobile-bar,.mobile-nav,.mobile-guide{display:none}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}.skip-link{position:fixed;z-index:200;top:0;left:80px;background:var(--paper);padding:15px;transform:translateY(-130%)}.skip-link:focus{transform:none}
+/* M3 is a finite, cancellable graphic event. It never captures input. */
+.motion-stage{position:fixed;inset:0 0 0 var(--nav);z-index:80;pointer-events:none;overflow:hidden;contain:strict}.motion-cut{position:absolute;inset:-25% -30%;background:var(--red);transform:translateX(-140%) skewX(-24deg)}.motion-cut.black{background:var(--ink);inset:0 -30%;transform:translateX(140%) skewX(-24deg)}.motion-type{position:absolute;right:7%;top:15%;font:900 clamp(110px,22vw,330px)/1 var(--display);letter-spacing:-.09em;color:var(--paper);transform:translateY(120%);opacity:0}.motion-caption{display:block;font:700 14px/2 var(--mono);letter-spacing:.1em;text-align:right}.motion-stage.play .motion-cut{animation:cut-red 650ms cubic-bezier(.75,0,.2,1) both}.motion-stage.play .motion-cut.black{animation:cut-black 650ms cubic-bezier(.75,0,.2,1) both}.motion-stage.play .motion-type{animation:cut-type 650ms cubic-bezier(.6,0,.2,1) both}@keyframes cut-red{0%{transform:translateX(-140%) skewX(-24deg)}24%,40%{transform:translateX(-28%) skewX(-24deg)}100%{transform:translateX(140%) skewX(-24deg)}}@keyframes cut-black{0%,12%{transform:translateX(140%) skewX(-24deg)}37%{transform:translateX(28%) skewX(-24deg)}100%{transform:translateX(-140%) skewX(-24deg)}}@keyframes cut-type{0%,20%{opacity:0;transform:translateY(70%)}40%,58%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-70%)}}.motion-reduced .motion-stage{display:none}
+@media(max-height:760px) and (min-width:801px){.rail-word{display:none}.sidebar nav{margin-top:0}.rail-menu{min-height:54px}}
+@media(min-width:1600px){.main{padding-left:60px;padding-right:60px}.module-header{grid-template-columns:205px minmax(0,1fr) 260px;padding:35px 44px;min-height:310px}.module-number{font-size:180px}.code-line{font-size:15px}.code-scroll{max-height:650px}.code-grid>.card{padding:34px}.chapter-art .art-type{font-size:100px}.module[data-style=data] .art-type{font-size:74px}}
+@media(max-width:1200px){.main{padding-left:26px;padding-right:26px}.module-header{grid-template-columns:135px minmax(0,1fr) 140px;gap:20px;padding:25px;min-height:260px}.module-number{font-size:130px}.module-header h2{font-size:52px}.chapter-art .art-type{font-size:62px}.chapter-art:before{width:120px;height:120px;border-width:12px}.module[data-style=anatomy] .chapter-art:before{width:130px;height:150px}.module[data-style=data] .chapter-art:before{width:120px;height:170px}.module[data-style=data] .art-type{font-size:52px;max-width:110px}.module[data-style=exam] .chapter-art:before{width:100px;height:140px}.module[data-style=draft] .chapter-art:before{width:110px;height:110px}.code-grid>.card{padding:22px}.code-line{font-size:14px}.circuit-grid{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:20px}.sim-stats strong{font-size:32px}.hero-side{gap:15px}.stat small{display:none}}
+@media(max-width:959px){.code-grid,.circuit-grid{grid-template-columns:minmax(0,1fr)}.code-grid>.card{border-left:0;border-top:7px solid var(--red)}.explain{position:static;max-height:none;overflow:visible}.twocol{grid-template-columns:minmax(0,1fr);gap:18px}.module-header{grid-template-columns:105px minmax(0,1fr) 100px;min-height:230px;gap:15px;padding:23px}.module-number{font-size:105px}.module-header h2{font-size:44px}.chapter-art .art-type{font-size:50px}.chapter-art:before{width:90px;height:110px;border-width:7px}.chapter-art:after{right:-90px}.hero-side{display:none}.card{padding:24px}.register-tabs{margin:-24px -24px 24px}.flow{grid-template-columns:repeat(2,minmax(0,1fr))}.subheading h3{font-size:28px}.section-intro{font-size:16px}.codefoot .btn{display:inline-block;font-family:var(--reading);margin-top:10px;background:var(--red);color:var(--paper);border-color:var(--red)}.return-code{display:block;margin-bottom:18px}.object-status .btn{display:inline-block}}
+@media(min-width:960px){.object-status .btn{display:none}}
+@media(max-width:800px){:root{--nav:0px}html{scroll-padding-top:80px}.sidebar{display:none}.mobile-bar{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:8px;background:var(--ink);color:var(--paper);min-height:60px;padding:7px 14px;padding-top:calc(7px + env(safe-area-inset-top));border-bottom:3px solid var(--red)}.mobile-title{flex:1;min-width:0;font-size:14px;font-weight:750;line-height:1.5}.mobile-title small{display:block;font:9px/1.4 var(--mono);letter-spacing:.1em;color:#c8baa3}.mobile-count{color:#ffb69b;margin-right:7px;font:700 12px var(--mono)}.mobile-bar .btn{font-size:13px;padding:6px 10px;min-height:44px;flex-shrink:0;background:var(--paper)}.mobile-return{flex-shrink:0;width:44px;height:44px;border:1px solid #a9957e;background:var(--ink);color:var(--paper);font-size:22px}.mobile-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;z-index:65;inset:auto 0 0;background:var(--ink);border-top:3px solid var(--ink);padding:0 0 env(safe-area-inset-bottom)}.mobile-tab{min-height:67px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;padding:5px 1px;border:0;border-top:3px solid transparent;background:var(--ink);color:#d0c4af;font-size:12px;line-height:1.4}.mobile-tab .tab-marker{font:12px var(--mono)}.mobile-tab.active{border-top-color:var(--paper);background:var(--red);color:var(--paper);font-weight:800}.main{margin:0;padding:0 18px calc(110px + env(safe-area-inset-bottom))}.topbar{min-height:47px}.topbar>span{font-size:9px;max-width:53%;letter-spacing:0}.topbar .btn{font-size:11px;min-height:36px}.topbar #backBtn{display:none}.hero{padding:13px 0 15px}.hero h1{font-size:14px}.hero p{display:none}.mobile-guide:not([hidden]){display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--ink);padding:8px 0;font-size:11px;margin-bottom:2px}.mobile-guide p{margin:0;flex:1}.mobile-guide button{background:none;border:0;border-left:1px solid var(--ink);min-width:44px;min-height:36px;color:var(--red);padding:2px 9px;font-size:11px}.module-header{grid-template-columns:75px minmax(0,1fr);gap:15px;min-height:190px;padding:20px 16px}.module-number{font-size:82px;align-self:start;padding-top:12px}.module-heading{padding-right:0}.module-header h2{font-size:44px;line-height:1.2}.module-heading .kicker{font-size:9px;letter-spacing:.04em;margin-bottom:9px}.module-header .eyebrow{font-size:8px;letter-spacing:.015em;margin-top:12px}.module[data-style=exam] .module-header h2,.module[data-style=anatomy] .module-header h2{font-size:36px}.chapter-art{position:absolute;right:-30px;bottom:-60px;opacity:.3;width:140px;height:150px;z-index:-1}.chapter-art small{display:none}.chapter-art .art-type{display:none}.module[data-style=data] .module-number{align-self:start}.module[data-style=exam] .chapter-art:before{opacity:.5}.module[data-style=draft] .chapter-art{opacity:.3}.section-intro{margin:21px 0;font-size:16px}.subheading{grid-template-columns:55px minmax(0,1fr);gap:12px;margin-top:42px;border-top-width:6px}.subheading .index{font-size:15px}.subheading h3{font-size:28px}.card{padding:21px}.register-tabs{margin:-21px -21px 22px}.register-tabs .btn{min-width:33.33%;min-height:48px}.code-scroll{max-height:450px}.code-grid>.card{padding:21px}.code-grid{border-width:2px}.codebar{padding:12px;gap:6px}.codebar>span{font-size:11px}.codebar>span>span{display:none}.codefoot{padding:12px;font-size:10px}.code-line{font-size:13px;line-height:2.7}.line-select{width:40px;padding-right:9px;min-height:44px}.code-line{align-items:center}.tok{min-height:44px}.explain h3{font-size:23px}.note{padding:18px;margin:22px 0}.circuit-viewport{max-height:60vh}.circuit-toolbar .tag{font-size:10px}.circuit-toolbar>.row{width:100%;gap:5px}.circuit-toolbar .btn{padding:7px 9px;font-size:12px}.circuit-toolbar output{font-size:11px}.diagram-frame{padding:13px}.drawing-strip{padding:10px 13px;font-size:10px}.drawing-strip strong{font-size:21px}.object-status{font-size:10px}.part-panel h3{font-size:28px}.part-chooser .btn{padding:8px 10px}.sim-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.sim-stat{padding:16px;border-bottom:1px solid #7a6a57}.sim-stat strong{font-size:34px}.bit .name{font-size:10px;line-height:2.5;letter-spacing:-.07em}.bit .pos{font-size:9px}.bit .val{font-size:30px}.bit-info{padding:15px}.reg-value{font-size:52px}.ledcell{font-size:9px;padding:10px 1px}.ledlight{width:16px;height:16px}.question{padding:24px 0}.question h3{grid-template-columns:65px minmax(0,1fr);gap:13px;font-size:21px}.qnum{font-size:26px}.qcategory{margin:10px 0 17px 78px}.question details{margin-left:0;padding:0 16px}.qa-tools{gap:8px}.qa-tools .search{min-width:100%;width:100%}.qa-tools .select{flex:1;font-size:13px;min-width:0}.qa-tools .btn{font-size:12px}.chapter-sheet{inset:0;margin:0;width:min(580px,100%);max-width:100%;border-right:0;height:100%;max-height:100dvh}.chapter-head{padding:20px;border-bottom-width:7px;padding-top:calc(20px + env(safe-area-inset-top))}.chapter-head h3{font-size:38px}.chapter-foot{padding:12px 20px calc(14px + env(safe-area-inset-bottom))}.contents-index{padding:10px 20px;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.contents-module{display:flex;flex-direction:column;align-items:flex-start;gap:3px;font-size:10px;line-height:1.45;min-height:67px;border-bottom:2px solid var(--ink)}.contents-module b{font-size:25px}.contents-module span{max-width:100%}.contents-label{margin-left:20px}.chapter-link{min-height:59px}.motion-control{min-height:40px}.chapter-utilities{gap:12px}.chapter-utilities .linkbtn{min-height:36px}.toast{bottom:calc(90px + env(safe-area-inset-bottom))}.modal-head{padding:14px 18px}.modal-head h3{font-size:19px}.modal-body{padding:21px}.footer{margin-top:40px}.reading-indicator{font-size:11px;margin:12px 0 0;color:var(--muted)}.skip-link{left:10px}.sim-grid{grid-template-columns:1fr}.flow{grid-template-columns:repeat(2,minmax(0,1fr))}.flow-node{font-size:14px;padding:14px}td,th{padding:12px;font-size:14px}}
+@media(max-width:370px){.main{padding-left:12px;padding-right:12px}.mobile-bar{padding-left:12px;padding-right:12px}.module-header{grid-template-columns:62px minmax(0,1fr);gap:10px;padding:17px 12px;min-height:184px}.module-number{font-size:70px}.module-header h2{font-size:36px}.module[data-style=exam] .module-header h2,.module[data-style=anatomy] .module-header h2{font-size:32px}.module-header .eyebrow{font-size:7px}.module-heading .kicker{font-size:8px}.card{padding:17px}.code-grid>.card{padding:17px}.register-tabs{margin:-17px -17px 20px}.bit .name{font-size:8px}.bit .val{font-size:25px}.bit .pos{font-size:8px}.bit-info{padding:13px;font-size:15px}.subheading{grid-template-columns:45px minmax(0,1fr)}.subheading h3{font-size:25px}.explain h3{font-size:21px}.circuit-toolbar .btn{padding:7px 6px;font-size:11px}.drawing-strip{font-size:9px}.topbar>span{font-size:8px}.mobile-tab{font-size:11px}.ledcell{font-size:8px}.ledlight{width:14px;height:14px}.sim-stat{padding:14px}.sim-stat strong{font-size:30px}.question h3{grid-template-columns:58px minmax(0,1fr);font-size:19px;gap:10px}.qnum{font-size:24px}.qcategory{margin-left:68px}.chapter-head h3{font-size:34px}.chapter-head{padding:16px}.chapter-head p{font-size:11px}.contents-index{padding-left:16px;padding-right:16px}.chapter-list{padding-left:12px;padding-right:12px}}
+@media(prefers-reduced-motion:reduce){.motion-stage{display:none!important}*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+@media print{body{background:#fff;font-size:11pt}.sidebar,.mobile-bar,.mobile-nav,.mobile-guide,.topbar,.hero-side,.circuit-toolbar,.motion-stage,.toast,.chapter-sheet,button,.qa-tools,.footer,.reading-indicator,.object-status{display:none!important}.main{margin:0;padding:0}.module[hidden]{display:block!important;break-before:page}.module-header{min-height:160px;grid-template-columns:110px 1fr 100px;print-color-adjust:exact;-webkit-print-color-adjust:exact}.module-number{font-size:100px}.module-header h2{font-size:34px}.code-grid,.circuit-grid,.twocol{display:block}.explain{position:static;max-height:none;overflow:visible}.code-scroll{max-height:none;overflow:visible}.code-line{white-space:pre-wrap;width:100%;font-size:9px;line-height:1.8;print-color-adjust:exact}.lineno,.line-select{display:block!important}.code-text{white-space:pre-wrap;overflow-wrap:anywhere;min-width:0}.circuit-viewport{max-height:none;overflow:visible}.circuit-viewport svg{width:100%!important;height:auto!important}.modal{display:none}.question{break-inside:avoid}.card{padding:18px}.chapter-art{display:none}.question details{margin-left:0}.bit .val{font-size:30px}.sim-stat strong{font-size:30px}.sim-stats{print-color-adjust:exact}}
+
+</style>
+</head>
+<body>
+<a class="skip-link" href="#modules">跳到学习内容</a>
+<header class="mobile-bar" aria-label="当前模块与章节导航"><div class="mobile-title"><small>实验 03 / PULSE COUNTER</small><span id="mobileTitle"></span></div><button id="mobileBackBtn" class="mobile-return" aria-label="返回刚才阅读处" hidden>↶</button><button id="contentsBtn" class="btn contents-trigger" aria-haspopup="dialog" aria-expanded="false" aria-controls="contentsDialog">目录 ☰</button></header>
+<aside class="sidebar" id="sidebar" aria-label="编号导航脊"><a class="brandmark" href="#modules" aria-label="8051学习实验室">51</a><button class="rail-menu" id="railContentsBtn" aria-label="展开杂志目录" aria-haspopup="dialog" aria-expanded="false" aria-controls="contentsDialog"><span aria-hidden="true">☰</span>目录</button><nav id="nav" aria-label="五个学习模块"></nav><span class="rail-word">PULSE / COUNTER / 03</span><button class="rail-top" id="railTopBtn" aria-label="回到本模块开头">↑<br>顶部</button></aside>
+<main class="main">
+<div class="topbar"><span>8051 / 交互式工程学习档案<br>VOL.03 · MODE 02 · EXTERNAL COUNTER</span><div class="row"><button class="btn" id="backBtn" hidden>← 返回阅读处</button><button class="btn" id="sourcesBtn">资料与核验</button></div></div>
+<header class="hero"><div><h1>读懂每一次<span>脉冲。</span></h1><p>实验三 · 从一行 C51，到 T0 硬件计数，再到八位 LED 显示。</p></div><div class="hero-side"><div class="stat"><strong>08</strong><small>位计数显示</small></div><div class="stat"><strong>02</strong><small>自动重装方式</small></div><div class="stat"><strong>256</strong><small>零重装循环周期</small></div></div></header>
+<aside class="mobile-guide" id="mobileGuide" aria-label="首次使用提示"><p><b>底部换模块，顶部找章节。</b></p><button id="tryContentsBtn">试试目录</button><button id="dismissGuideBtn" aria-label="关闭导航提示">×</button></aside>
+<div id="modules" tabindex="-1"></div>
+<p class="reading-indicator" id="readingLocation" aria-live="off"></p>
+<footer class="footer">SOVIET CONSTRUCTIVIST 8051 LEARNING LAB / VOL.03<br>A3-β · N3 · T3 · M3 · F3 / SINGLE-FILE OFFLINE EDITION<br>教学示意依据原始HTML保留的代码与电路模型；HTML交互不等同于Proteus或MCU指令级仿真。</footer>
+</main>
+<dialog class="modal" id="modal" aria-labelledby="modalTitle"><div class="modal-head"><h3 id="modalTitle"></h3><button class="btn" id="closeModal" aria-label="关闭弹窗">关闭 ×</button></div><div class="modal-body" id="modalBody"></div></dialog>
+<dialog class="chapter-sheet" id="contentsDialog" aria-labelledby="contentsTitle"><div class="chapter-head"><div><span class="info-label" id="contentsModule"></span><h3 id="contentsTitle">阅读目录</h3><p id="contentsCount"></p></div><button class="btn" id="closeContentsBtn" aria-label="关闭目录">关闭 ×</button></div><div class="contents-scroll"><nav class="contents-index" id="contentsIndex" aria-label="五模块索引"></nav><p class="contents-label">SECTION INDEX / 当前模块章节</p><nav class="chapter-list" id="contentsList" aria-label="当前模块的章节"></nav></div><div class="chapter-foot"><label class="motion-control"><input type="checkbox" id="motionToggle">减少动画</label><p class="motion-help" id="motionHelp"></p><div class="chapter-utilities"><button class="linkbtn" id="contentsTopBtn">↑ 本模块开头</button><button class="linkbtn" id="helpBtn">使用说明</button><button class="linkbtn" id="printBtn">打印讲义</button></div><span class="muted">底部换模块，顶部找章节。再次点当前模块保留位置。</span></div></dialog>
+<nav class="mobile-nav" id="mobileNav" aria-label="五个学习模块"></nav>
+<div id="motionStage" class="motion-stage" aria-hidden="true" hidden><div class="motion-cut"></div><div class="motion-cut black"></div><div class="motion-type"><span id="motionNumber"></span><span class="motion-caption" id="motionCaption"></span></div></div>
+<div class="toast" id="toast" role="status" hidden></div>
+<script>
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const hex=n=>'0x'+(n&255).toString(16).toUpperCase().padStart(2,'0');
+const bin=n=>(n&255).toString(2).padStart(8,'0');
+const jump=(m,t,label)=>`<button class="linkbtn" data-jump="${m}:${t||''}">${label}</button>`;
+const fold=(title,body)=>`<details><summary>${title}</summary><div>${body}</div></details>`;
+const heading=(n,title)=>`<div class="subheading"><span class="index">${n}</span><h3>${title}</h3></div>`;
+const names=['C51 代码精讲','硬件电路连接示意','Proteus 硬件电路讲解','寄存器与核心知识点','常见教师提问与答案解析'];
+const english=['C51 CODE EXPLORER','PROTEUS CIRCUIT DIAGRAM','PROTEUS CIRCUIT EXPLORER','REGISTER & THEORY LAB','EXPERIMENT VIVA PREPARATION'];
+const sourceLines=[
+'#include <reg51.h>//包含标准8051寄存器头文件，取得P1、P3、TMOD、TCON、TH0、TL0等定义',
+'',
+'void main(void)   //主函数.先初始化T0，再一直刷新LED显示',
+'{',
+'    TMOD = 0x06;  //0000 0110：T0的GATE=0、C/T=1、M1=1、M0=0',
+'',
+'    TH0 = 0x00;   //重装值0',
+'',
+'    TL0 = 0x00;   //计数从0开始',
+'',
+'    TR0 = 1;      //启动外部计数T0，硬件计数',
+'',
+'    while (1)',
+'    {',
+'        P1 = ~TL0;//共阳，0亮1灭，TL0=1时P1=0xFE，TL0=0时P1=0xFF',
+'    }',
+'}'
+];
+const originalCode=sourceLines.join('\n');
+const lineInfo={
+1:['让编译器认识寄存器名称','预处理器在编译前引入 reg51.h，使 TMOD、TH0、TL0、P1 以及 TR0 等名称有对应的特殊功能寄存器或位地址。它不是程序运行时去读取一个文件。','<code>#include &lt;...&gt;</code> 是头文件包含指令；reg51.h 是 Keil 的标准 8051 寄存器定义头文件。这里没有创建普通的计数变量。','这行本身不向硬件写数据；后续访问这些名称才会读写芯片的寄存器。','为直接操作 8051 的定时/计数器和端口提供声明。','编译器能够把名称解析到对应地址；芯片运行状态不因包含头文件直接变化。','删除后，若没有其他等效声明，相关名称会变成未定义标识符而无法正常编译。'],
+3:['进入主程序','程序启动代码完成必要的运行环境准备后进入 main。先执行一次初始化，再进入持续刷新的循环。','第一个 void 表示函数没有返回值；括号里的 void 表示无参数。<code>void main(void)</code> 是此 Keil C51 嵌入式程序的写法，不能据此推成所有 C 程序的通用入口格式。','main 是 CPU 执行的软件入口，不是 T0 外设。','把寄存器初始化和显示刷新串起来。','CPU 顺序执行花括号内的语句；这段代码没有中断服务函数。','更改函数名而不更改启动机制，程序不会按预期进入此处。不要把 main 当成一个收到脉冲就被重新调用的函数。'],
+4:['主函数体开始','左花括号标记主函数体的开始，与第17行配对。','花括号划定复合语句范围；它不是一个独立的硬件操作。','没有直接的寄存器写入。','界定 main 的执行范围。','只影响源代码的组织和控制结构，不会把计数器清零。','缺失配对的花括号通常会产生编译错误。'],
+5:['选择 T0 的计数方式 2','把整个 TMOD 写成 0000 0110B：T0 不使用外部门控、从外部 T0 引脚计数、工作于 8 位自动重装方式。','<code>=</code> 是赋值；<code>0x06</code> 是十六进制常量。TMOD 是 8 位特殊功能寄存器；这里是整字节赋值。','TMOD 的 D3～D0 分别为 GATE0、C/T0、M1、M0；设置为 0、1、1、0。高四位也被同时清零。','实验只显示八位计数，TH0=0 时方式2可以在 0～255 间循环，与当前截图一致。指导书没有限定必须使用方式1。','选择了计数来源和计数结构，但没有启动计数；还需要 TR0=1。','改成 0x05 是外部计数方式1；改成 0x02 是方式2定时；改成 0x01 是方式1定时。它们都不是本程序的同义写法。'],
+7:['保存溢出后的重装值','给 TH0 写入 0。当前是方式2，所以 TH0 用作重装寄存器；TL0 溢出时硬件把这个值复制回 TL0。','TH0 的数字0表示定时/计数器0，不是英文字母O；0x00 等于十进制0。','TH0 地址为 8CH，是一个 8 位寄存器。方式2中它不随 TL0 每次计数递增。','让每次溢出后从0重新计数，形成256个有效事件的循环。','TH0=0；这一步不会自动同步改变 TL0 的首轮初值。','如果只改 TH0=0xF0，而 TL0 仍从0开始，首轮要256次才溢出，之后每16次溢出。复位状态下删除此行可能仍为0，但失去明确的重装初始化。'],
+9:['设定首轮计数起点','把 TL0 设置为0，使第一次计数从0起步。','TL0 是 8 位寄存器，取值范围为 0～255；整字节赋值覆盖它原有的值。','TL0 地址为 8AH；在方式2中它是实际递增的计数单元。','TH0 管后续重装，TL0 管首轮起点，两行初始化职责不同。','TL0=0；尚未执行 TR0=1，正常复位起始条件下不会在初始化中计数。','删除后若从复位启动可能仍是0；但从调试器中途运行或重入初始化时不能保证。修改为 0xFE，首轮两个有效计数事件后就溢出。'],
+11:['允许 T0 运行','把 TR0 置1。因为 GATE0=0，这就打开 T0 的运行开关；后续符合采样条件的下降沿由硬件计入 TL0。','TR0 是 TCON.4 的位名称，由头文件定义；<code>TR0 = 1;</code> 是对一位进行赋值，不是向 TCON 整字节写1。','TR0 的位地址为 8CH，TCON 的字节地址是88H。TH0 的字节地址也写作8CH，但两者属于不同寻址语境，不能混同。','TMOD 只决定怎样工作，TR0 决定是否运行。','允许硬件计数。设置 TR0 不会清空 TL0、TH0 或 TF0。','删除后，从复位开始 TR0 保持0，输入变化不会累加。改为 TR0=0 会暂停计数，但保留现有计数值。'],
+13:['进入永久显示循环','条件1恒为真，CPU 会反复执行第15行，把最新的 TL0 读出来并刷新 LED。','<code>while (表达式)</code> 在表达式非零时重复循环体；1 是非零常量。括号后的第14～16行是循环体。','硬件计数与此循环并行工作；CPU 不是在此循环里逐个检测下降沿。','让端口显示持续跟随硬件计数结果。','CPU 在条件判断与显示语句之间循环。即使循环多执行很多次，TL0 也不会因此加1。','去掉循环只会输出一次。即使随后外设还在计数，P1 也不再自动刷新；main 结束后的行为不应依赖。'],
+14:['显示循环体开始','界定 while 循环的执行范围，与第16行配对。','本循环体只有一条实际执行语句，使用花括号仍能清楚表达范围。','无独立硬件影响。','保证阅读时明确哪些语句会重复。','后续第15行属于 while 的循环体。','若只删除成对花括号且仅保留这一条语句，当前逻辑可等效，但未来增加语句时容易误判范围；这里只作教学讨论。'],
+15:['把计数值翻译为低电平点亮','读取 TL0，按位取反，把结果的低8位写入 P1。计数位为1时，对应输出为0，电流经电阻和LED流入端口，所以该灯点亮。','<code>~</code> 是按位取反，不是逻辑非<code>!</code>。P1 是8位端口；无论中间表达式是否按编译选项发生整型提升，赋给P1的结果是取反后的低8位。','P1.0～P1.7（1～8脚）控制八条LED支路。截图从上到下对应 bit0～bit7；这与常见二进制数从高位到低位的书写顺序相反。','电路公共阳极侧接电源，端口低电平点亮。取反后才能让“灯亮”代表计数中的1。','TL0=1→P1=0xFE，仅最上方bit0灯亮；TL0=3→P1=0xFC，最上面两灯亮。此语句不修改 TL0。','删掉~会把显示逻辑反过来；把它写成!TL0只会得到0或1，不能表示八位计数。若不再反复执行，显示会滞后或冻结。'],
+16:['返回循环条件','结束 while 的循环体，然后继续检查恒真条件1。','右花括号与第14行配对；它表达控制结构，不是计数指令。','T0 在运行条件满足时继续独立工作。','形成持续刷新回路。','CPU 继续回到第13行判断，随后再次执行第15行。','误删或错配可能改变循环范围或导致编译失败。'],
+17:['主函数体结束','与第4行配对。由于上面的 while(1) 不会正常退出，这里在当前程序的正常执行中不会走到。','这是源代码结构边界，不是一条 return 语句。','没有直接硬件操作。','保持函数定义完整。','无正常运行中的状态变化。','删除会破坏函数结构。不要把它理解为每个脉冲结束后程序重新启动。']
+};
+const syntax={
+'#include':['头文件包含','在编译前引入声明，帮助编译器识别寄存器等名称。不会在运行时联网或打开文本文件。','#include <reg51.h>','本实验靠它识别 TMOD、TR0 和 P1 等名称。'],
+'void':['无返回值 / 无参数','函数名前的 void 表示无返回值；参数列表中的 void 表示无参数。','void main(void)','这是Keil C51目标环境中的主函数写法。'],
+'while':['条件循环','条件非零时重复执行循环体；条件为0时退出。','while (1) { P1 = ~TL0; }','条件1恒真，循环只负责刷新显示，不负责产生计数事件。'],
+'=':['赋值运算符','先计算右边，再把结果写到左边对象；与比较是否相等的 == 不同。','TL0 = 0x00;','写入TL0会覆盖计数值；TR0=1则是位赋值。'],
+'~':['按位取反','把每个二进制位0、1互换。写入8位P1时只保留低8位。','TL0=0x05 → P1=0xFA','将计数逻辑转换成LED低电平有效逻辑。~与!的用途不同。'],
+'integer':['整数常量1','未加进制前缀的1是十进制整数常量，非零可表示逻辑真。','while (1) / TR0 = 1;','在while条件中表示恒真；写TR0时表示置位。它不是0x前缀的十六进制写法。'],
+'hex':['十六进制常量','前缀0x表示十六进制，每一位十六进制数字对应4位二进制。','0x06 = 0000 0110B = 6D','0x06是TMOD的配置位组合，不是延时6毫秒或计数6次。'],
+'reg51.h':['8051寄存器定义','这个头文件提供SFR及常用位的声明。寄存器名称对应硬件地址，不能当普通局部变量理解。','TMOD=0x06; TR0=1;','使用标准8051的寄存器定义；不代表所有兼容芯片都有完全相同的扩展功能。'],
+'TMOD':['定时/计数器方式寄存器','8位，89H，非位寻址SFR。高半字节管T1，低半字节管T0。','TMOD = 0x06;','T0：GATE=0、C/T=1、M1M0=10。'],
+'TH0':['T0高字节 / 本例重装寄存器','8位，8CH。在方式2中保存自动重装值，不与TL0级联成16位计数器。','TH0 = 0x00;','TL0溢出后自动装入0，TH0仍保持0。'],
+'TL0':['T0低字节 / 本例计数寄存器','8位，8AH。在方式2中对有效事件递增，溢出时装入TH0。','TL0 = 0x00;','CPU读取它用于显示；硬件更新它进行计数。'],
+'TR0':['T0运行控制位','TCON.4，可位寻址。1允许运行，0停止；GATE=1时还要求INT0引脚为高。','TR0 = 1;','当前GATE=0，所以TR0是运行许可；置1不等于立即加1。'],
+'P1':['8位端口1','字节地址90H，P1.0～P1.7对应当前器件1～8脚。','P1 = ~TL0;','端口低电平使该支路LED亮，计数位1因此显示为灯亮。'],
+'sbit':['补充：C51位声明','这是扩展声明语法。sbit t0 = P3^4; 让 t0 成为P3.4的位别名；此处的^不是运行时异或。','sbit t0 = P3^4;\nt0 = 1;','当前截图未使用sbit；这里只在“显式释放P3.4”的备选写法中出现。'],
+'|=':['补充：按位或后赋值','x |= mask 相当于对x进行按位或并写回。掩码为1的位被置1，其余位保留原值。','P3 |= 0x10;','这是可选初始化示例，未加入原始程序。对于端口读改写，底层锁存器语义要与普通引脚读取区分。']
+};
+const equivalents=[
+['P1 的取反输出','P1 = ~TL0;','P1 = 255 - TL0;','在本例TL0是0～255的8位无符号寄存器、读取一次并把结果写入8位P1的前提下，两者产生相同的输出位图。算术表达式的中间类型与机器指令未必相同，不能据此声称执行时间完全相同。','255-x只是在这段8位取反输出情境下的解释，不宜推广到任意类型与位宽。'],
+['保留 T1 的配置','TMOD = 0x06;','TMOD = (TMOD & 0xF0) | 0x06;','原句直接写全部8位，T1高四位被清零；备选句只替换T0低四位并保留T1。若T1原高四位就是0，最终数值相同；若T1已配置，两者副作用不同。','先停止相关定时/计数器再修改方式。TMOD不能用TMOD^2这类方式声明硬件位。'],
+['TR0 的位控制','TR0 = 1;','TCON |= 0x10;','意图都是将TCON.4置1，但第二句涉及整个TCON的读改写。TCON里还有会被硬件改变的标志位，异步变化可能与整字节操作竞争；本例优先保留直接位赋值。','TCON = 0x10 并非一般等价写法：它会覆盖包括TF0在内的其他位。'],
+['显式保证 P3.4 输入条件','原程序没有这条语句（依赖复位后的端口锁存器=1）。','P3 |= 0x10;\n/* 或先在函数外声明 */\nsbit t0 = P3^4;\n/* 再在初始化时写 */\nt0 = 1;','这些是独立教学示例，不是原程序补抄。P3.4准双向口锁存器必须为1，外部信号才能把引脚拉低或拉高并被T0识别。正常复位后P3=0xFF，截图中的程序不再改P3，因此可依赖这一初始状态。','不能用P3=0x10来冒充只置一位：那会把另外七位锁存器清零。上述两种写法也不应重复添加。']
+];
+const flowSteps=[
+[3,'进入 main','这是CPU的软件执行流程。外部硬件计数不会“调用main”。'],
+[5,'选择计数方式','TMOD←0x06：T0外部计数，方式2，GATE=0。此时尚未启动。'],
+[7,'设置重装值','TH0←0x00：决定TL0溢出后的新起点。'],
+[9,'设置首轮起点','TL0←0x00：明确当前计数从0开始。'],
+[11,'允许硬件运行','TR0←1：T0开始接受符合条件的外部下降沿。'],
+[13,'检查循环条件','1恒为真，所以总会进入显示循环。图中没有正常退出分支。'],
+[15,'读取并刷新显示','CPU采样读取TL0、取反并写P1。这不是count++，也不是在软件中检测按键。'],
+[13,'回到循环条件','CPU继续循环。T0在另一条硬件路径上计数，二者没有一一对应的单步关系。']
+];
+const sourcesHTML=`<p>本版以<strong>2026-10-24当前任务上传的两张截图</strong>作为代码与仿真图依据，按正式指导书核对实验目的与显示要求。没有用旧版网页覆盖本次代码。</p>
+<ol class="source-list"><li><strong>763.png · Keil源代码截图</strong><br>逐行转录17行，保留全部执行语句、变量名称与先后顺序；注释按可见文字转录，缩进与空格作排版统一。没有原始.c字节文件，因此不声称与原文件逐字节相同。</li><li><strong>765.png · Proteus原理图截图</strong><br>U1=AT89C51；R1=10kΩ；R2～R9各220Ω；8个LED-RED；右侧开关下拉T0。SVG依据这张已确认截图重建，不称为教材原图。其余LED按自上而下D1～D8作教学编号；截图内部分位号被遮挡。</li><li><a href="https://docs.google.com/document/d/19bRcAGxGHUU9-X6zol5PD63ZmbIjoDlV/edit" target="_blank" rel="noopener">2024版《单片机原理及应用》实验指导书 -1127.docx</a><br>已读取实验三的目的、原理、实验内容、步骤、注意事项与思考题；也核对绪论中的LED有效电平及实验仪11.0592MHz说明。指导书没有为实验三限定TMOD具体数值，也没有提供本次截图的Keil源码。</li><li><a href="https://ww1.microchip.com/downloads/en/DeviceDoc/doc0265.pdf" target="_blank" rel="noopener">Atmel AT89C51 数据手册 · 0265G</a><br>用于核对PDIP引脚、P1/P3端口、电源及EA的真实硬件作用。</li><li><a href="https://ww1.microchip.com/downloads/en/DeviceDoc/doc4316.pdf" target="_blank" rel="noopener">Atmel 8051 Hardware Manual · 4316E</a><br>用于交叉核对方式2、TMOD/TCON、溢出及采样机制。手册覆盖多个型号；本页时序计算仅取经典AT89C51的12时钟条件，不引入X2扩展。</li><li>Keil官方资料：<a href="https://www.keil.com/support/docs/1630.htm" target="_blank" rel="noopener">Reading from an Input Port</a>、<a href="https://www.keil.com/support/man/docs/c51/c51_intpromote.asp" target="_blank" rel="noopener">INTPROMOTE</a>；核对输入锁存器与表达式类型细节。</li></ol>
+<h4>已确认与待核验</h4><ul class="checklist"><li><span class="checkmark">✓</span>实验三、P3.4/T0输入、P1八位显示及低电平点亮</li><li><span class="checkmark">✓</span>截图代码是TMOD=0x06：方式2外部计数；未使用中断</li><li><span class="checkmark">✓</span>可见引脚号、R1上拉、开关下拉、8条独立LED限流支路</li><li><span class="checkmark">✓</span>TH0重装、TL0递增、溢出TF0置1，不向TH0进位</li><li class="status-uncertain">待核验：Proteus工程文件、Program File路径、Clock Frequency实际设置、开关模型抖动属性、隐藏电源网络与供电数值。</li><li class="status-uncertain">图中XTAL、RST、EA端没有可见外接线；SVG保持原状。真实实物的电源、时钟、复位及片内程序EA接法仍须满足数据手册，不能照此局部仿真图省略。</li></ul><p class="small">以上外部链接只是参考资料入口。页面内容与全部教学交互已经内嵌，离线学习不需要访问这些链接。</p><h4>原版验收记录 · 2026-10-24（历史记录保留，非本次重构结论）</h4><p>已执行JavaScript语法检查，以及Chromium中的代码选择、语法解释、流程切换、SVG缩放/还原与对象选择、寄存器试算、跨模块跳转/返回、采样及计数、暂停/重置、TF0清零、问答折叠与搜索检查。</p><p>核对了TL0从254经两次事件溢出到0、TH0保持0、TF0置1；另核对TH0=240时TL0从255溢出后重装240。关闭CPU自动刷新时，计数继续而P1保持；停止TR0时输入不累加。</p><p>手机导航修订：在禁止外部资源与网络连接的CSP内嵌环境中，实际检查了1440、1024、768、390、320px五种宽度下全部五个模块（25组布局），以及手机章节目录内每个入口的定位、当前位置提示、首次提示关闭与记忆、阅读位置恢复、连续知识跳转及逐级返回、问答分类、缩放容器与底部遮挡。293项回归检查通过，无应用运行错误；另实际检查了Escape键关闭目录。模拟本地存储不可用时，导航和提示关闭仍可工作。放大后的SVG只在独立区域内滚动；切换位置会避开顶部栏。该检查验证资源独立性和Chromium布局，不等同于操作系统断网或iPhone实机测试。</p><p class="status-uncertain">未实测：Windows本机浏览器、iPhone/iPad Safari实体设备、file://直接打开时的系统剪贴板、Keil实机编译及Proteus工程实际运行。页面未声称HTML模型是真实Proteus运行结果。</p>`;
+
+// One circuit model is shared by both diagram views and the electrical audit.
+const circuitModel={
+ chip:{ref:'U1',model:'AT89C51',hiddenPins:{VCC:40,GND:20}},
+ branches:Array.from({length:8},(_,i)=>({bit:i,pin:i+1,resistor:'R'+(i+2),ohms:220,led:'D'+(i+1),anodeNet:'VCC',cathodeNet:'P1.'+i})),
+ input:{pin:14,name:'P3.4/T0',pullup:'R1',ohms:10000,net:'T0',switch:'S1',closedTo:'GND'},
+ nets:{T0:['U1.14','R1.2','S1.1'],VCC:['R1.1',...Array.from({length:8},(_,i)=>'R'+(i+2)+'.1')],GND:['S1.2']}
+};
+function circuitSVG(prefix,interactive){
+ const wrap=(id,label,body)=>`<g data-part="${id}" ${interactive?`tabindex="0" role="button" aria-label="${label}"`:''}>${body}<title>${label}</title></g>`;
+ const wire=d=>`<path class="wire" d="${d}"/><path class="hit" d="${d}"/>`;
+ let s=`<svg class="schematic" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 930" role="${interactive?'group':'img'}" aria-labelledby="${prefix}-title ${prefix}-desc"><title id="${prefix}-title">实验三脉冲计数电路，依据765.png重绘</title><desc id="${prefix}-desc">AT89C51左侧P1八路通过独立LED及220欧电阻接公共电源；右侧P3.4第14脚由10k电阻上拉，开关接地。</desc><defs><pattern id="${prefix}-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#dfd2ba" stroke-width=".65"/></pattern><pattern id="${prefix}-major" width="100" height="100" patternUnits="userSpaceOnUse"><rect width="100" height="100" fill="url(#${prefix}-grid)"/><path d="M100 0H0V100" fill="none" stroke="#c5bba9" stroke-width="1"/></pattern></defs><rect width="1120" height="930" fill="#FFF9ED"/><rect width="1120" height="930" fill="url(#${prefix}-major)"/>`;
+ s+=wrap('supply','公共电源网络',wire('M65 395V841')+`<path class="wire" d="M65 395l-9 19h18z"/><text x="37" y="383">电源</text>`);
+ s+=wrap('U1','U1 AT89C51',`<rect class="chip" x="510" y="65" width="300" height="580"/><text x="510" y="50" style="font-size:22px">U1</text><text x="510" y="668">AT89C51</text>`);
+ const leftPins=[['XTAL1',19,85],['XTAL2',18,150],['RST',9,235],['PSEN',29,345],['ALE',30,367],['EA',31,389],...Array.from({length:8},(_,i)=>['P1.'+i,i+1,470+i*22])];
+ const rightPins=[...Array.from({length:8},(_,i)=>['P0.'+i+'/AD'+i,39-i,85+i*22]),...Array.from({length:8},(_,i)=>['P2.'+i+'/A'+(i+8),21+i,282+i*22]),...['RXD','TXD','INT0','INT1','T0','T1','WR','RD'].map((n,i)=>['P3.'+i+'/'+n,10+i,470+i*22])];
+ leftPins.forEach(([n,num,y])=>{s+=wrap('pin'+num,`U1第${num}脚 ${n}`,`<line class="pin" x1="470" y1="${y}" x2="510" y2="${y}"/><path class="hit" d="M470 ${y}H510"/><text class="num" x="480" y="${y-7}">${num}</text><text x="520" y="${y+5}">${n}</text>${['PSEN','EA'].includes(n)?`<line class="sym" style="stroke-width:1" x1="520" y1="${y-11}" x2="${520+n.length*9}" y2="${y-11}"/>`:''}`);});
+ rightPins.forEach(([n,num,y])=>{s+=wrap('pin'+num,`U1第${num}脚 ${n}`,`<line class="pin" x1="810" y1="${y}" x2="850" y2="${y}"/><path class="hit" d="M810 ${y}H850"/><text class="num" x="828" y="${y-7}">${num}</text><text x="800" y="${y+5}" text-anchor="end">${n}</text>`);});
+ circuitModel.branches.forEach((b,i)=>{
+  const y=470+53*i,py=470+22*i,bend=326+17*i;
+  const d=`M65 ${y}H120 M175 ${y}H248 M292 ${y}H${bend}V${py}H470`;
+  s+=wrap('netP1'+i,`P1.${i}显示支路`,wire(d)+`<circle class="dot" cx="65" cy="${y}" r="4"/>`);
+  s+=wrap(b.resistor,`${b.resistor} 220欧限流电阻`,`<rect class="sym" x="120" y="${y-7}" width="55" height="14" fill="#cbc8aa"/><text x="120" y="${y-16}">${b.resistor}</text><text class="value" x="120" y="${y+25}">220Ω</text>`);
+  s+=wrap(b.led,`${b.led} LED-RED bit${i}`,`<circle class="sym led-disc" cx="270" cy="${y}" r="22"/><path class="sym" d="M248 ${y}H258 M280 ${y}H292 M258 ${y-11}L278 ${y}L258 ${y+11}Z M280 ${y-12}V${y+12} M280 ${y-18}l8 -8 m-4 1l4 -1l-1 4 M288 ${y-12}l8 -8"/><text x="245" y="${y-30}">${b.led}</text>`);
+ });
+ s+=wrap('netT0','R1、开关与T0共同节点',wire('M850 558H925 M925 444V608')+`<circle class="dot" cx="925" cy="558" r="4"/>`);
+ s+=wrap('R1','R1 10k欧上拉电阻',wire('M925 335V390')+`<path class="wire" d="M925 335l-9 19h18z"/><rect class="sym" x="918" y="390" width="14" height="54" fill="#cbc8aa"/><text x="942" y="407">R1</text><text x="942" y="429">10kΩ</text>`);
+ s+=wrap('S1','输入开关，教学标记S1',`<circle class="sym" cx="925" cy="608" r="3"/><circle class="sym" cx="925" cy="650" r="3"/><path class="sym" d="M925 610L950 645"/><rect x="911" y="596" width="50" height="70" fill="transparent"/><text x="962" y="625">开关</text><text class="value" x="962" y="646">S1*</text>`);
+ s+=wrap('ground','开关下端接地',wire('M925 653V724')+`<path class="wire" d="M907 724H943 M914 733H936 M921 742H929"/><text x="946" y="727">GND</text>`);
+ s+=wrap('unused','原图右下孤立接地端',`<path class="wire" d="M1025 705V740 M1016 723h18l-9 17z"/><text class="value" x="985" y="769">原图孤立地端</text>`);
+ s+=`<text class="value" x="35" y="902">* S1 与部分LED位号为讲解标记；源图未显示的外围电路未补画。导线无圆点交叉处不构成连接。</text></svg>`;
+ return s;
+}
+const partInfo={
+ U1:['U1 · AT89C51','微控制器 / 40脚PDIP引脚编号','芯片内部同时包含CPU、P1/P3端口和T0定时/计数器。本实验中T0从P3.4输入取得有效事件，CPU反复读取TL0并刷新P1。截图芯片标记为AT89C51，不能用STC的1T/6T参数直接代替。','P3.4/T0=14脚；P1.0～P1.7=1～8脚。图中电源脚隐藏，真实器件VCC=40脚、GND=20脚。','Proteus器件名AT89C51可由截图器件列表核实。Program File和Clock Frequency属性未显示。',5],
+ R1:['R1 · 10kΩ','上拉电阻 / 器件检索名 RES','R1上端接电源，下端与T0和开关上端共节点。开关断开时，上拉使输入趋于高电平；开关闭合时，接地把输入拉低，产生一次由高到低的变化。','R1下端 ↔ P3.4/T0（14脚）↔ 开关上端。','端口P3本身有内部上拉，截图仍外接了10kΩ。外接R1不能克服P3.4锁存器写0造成的主动下拉，也不是机械去抖电路。',11],
+ S1:['开关 · 教学标记 S1','图中未标号的输入开关','这是仿真图里的接地开关；闭合把T0节点拉低，断开后由R1上拉。一个完整的断开→闭合→断开过程包含一个下降沿和一个上升沿。T0对符合采样条件的下降沿计数。','上端接T0节点；下端接GND。','截图器件栏含SWITCH、BUTTON、DIPSW_2，但仅凭图不能把放置的开关模型唯一认定为其中一个名称。需要打开工程属性确认；不把它等同于实验仪内部单脉冲发生器。',11],
+ netT0:['T0 输入网络','信号路径 / 真实导线高亮','选中轮廓对应实际导线：R1下端、开关上端与U1第14脚相连。开关只改变输入电平，计数是否发生还取决于TR0、TMOD、端口锁存器和采样条件。','R1.2 ↔ U1.14 ↔ S1.1。节点圆点表示明确连接。','没有软件count++，也没有接到P3.3/INT1。TR0=1且GATE=0时允许硬件接受外部计数事件。',11],
+ supply:['LED 公共电源侧','公共阳极侧供电','左侧竖线通过8个独立的220Ω电阻连接8个LED阳极，每个LED阴极再到一个P1引脚。它们不是一只封装在一起的共阳数码管，只是采用公共阳极侧供电、低电平驱动的独立LED。','电源 → R2～R9 → 对应LED → P1.0～P1.7。','截图没有标电源数值；不要把5V或LED实际电流伪装成从图里读出的数据。指导书描述实验仪提供5V，但不等于截图属性已确认。',15],
+ ground:['GND · 开关回路','参考地','接地使开关闭合时T0节点成为低电平。开关断开时，R1把该节点上拉。这里的地符号与右下方未接线的孤立端子不是一条可见导线。','S1下端 → 地。','仿真符号不替代真实硬件的公共参考地；U1隐藏电源连接需要工程文件进一步核查。',11],
+ unused:['原图孤立地端','保持原图未接线状态','截图右下有一个孤立的接地端符号，未与开关或其他线段连接。SVG保留这一位置关系，不把它补接成新的电路。','可见拓扑：无相连导线。','它不构成额外的脉冲输入元器件，也不把相邻导线自动接地。',11]
+};
+function getPart(id){
+ if(partInfo[id])return partInfo[id];
+ const ri=/^R([2-9])$/.exec(id);if(ri){const i=Number(ri[1])-2;return [id+' · 220Ω','独立限流电阻 / RES',`这只电阻与${'D'+(i+1)}串联，限制该支路电流。它不与另外七只LED共用同一只电阻。P1.${i}输出低时，该支路可能导通。`,`电源 → ${id} → D${i+1}阳极 → 阴极 → P1.${i}（${i+1}脚）。`,'参数220Ω来自截图；精确电流还依赖电源电压、LED压降及端口低电平压降，不能只用220Ω推定。',15];}
+ const di=/^D([1-8])$/.exec(id);if(di){const i=Number(di[1])-1;return [id+' · LED-RED',`红色LED / 计数bit${i}`,`该灯对应TL0的第${i}位，权值2^${i}=${2**i}。P1.${i}=0时，电流由电源经R${i+2}、LED流入单片机，灯亮；P1.${i}=1时灯灭。`,`R${i+2} → ${id}阳极；${id}阴极 → P1.${i}（${i+1}脚）。`,'D1～D8按原图从上到下编号。原图部分位号不清晰，这里采用教学顺序标记。取反输出使“亮”代表计数1。',15];}
+ const net=/^netP1([0-7])$/.exec(id);if(net){const i=Number(net[1]);return [`P1.${i} · 显示信号支路`,`TL0.bit${i} → 反相输出`,`高亮的是R${i+2}与D${i+1}支路的可见连线，终点为U1第${i+1}脚。它是电流通路与端口输出网络，不是脉冲计数输入。`,`电源—R${i+2}—D${i+1}—U1.${i+1}。`,'扇形转折处的相交线如果没有连接圆点，则保持各自独立；八个P1引脚不应短接。',15];}
+ const pin=/^pin(\d+)$/.exec(id);if(pin){const n=Number(pin[1]);if(n<=8)return [`U1.${n} · P1.${n-1}`,'输出引脚',`对应TL0.bit${n-1}，通过第15行反相输出控制D${n}。不是所有八个灯一起表示十进制一位数字。`,`第${n}脚 ↔ D${n}阴极；阳极经R${n+1}到电源。`,'点击“关联代码”查看P1=~TL0；二进制书写顺序与原图上下顺序不同。',15];if(n===14)return ['U1.14 · P3.4/T0','外部计数输入','P3.4的第二功能为T0外部计数输入；TMOD中C/T0=1才选择这条输入来源。该脚不是INT0或INT1。','14脚 → 右侧R1与开关公共节点。','P3.4锁存器需保持1；输入的高、低持续时间需满足当前芯片的采样要求。',5];if(n===31)return ['U1.31 · EA','片内/片外程序存储选择引脚','截图EA引脚无可见连线；SVG保持原图。真实AT89C51执行片内Flash程序时，EA应接高电平。','当前截图可见：未接外线。','这是31脚物理引脚EA，不是IE寄存器中的中断总允许位EA。不能据图认定实物可悬空工作。',3];if(n===18||n===19)return [`U1.${n} · ${n===18?'XTAL2':'XTAL1'}`,'时钟引脚','截图没有外接晶振和电容。Proteus中的模型时钟属性与真实晶振电路需要区别，图里看不到属性值。','当前截图可见：引脚悬空。','实验仪11.0592MHz来自指导书，截图Proteus时钟未确认。不能由空脚推断真实单片机不需要时钟。',3];if(n===9)return ['U1.9 · RST','复位输入','RST是高电平有效的复位输入，图中没有可见复位电路。复位建立TR0=0、P3锁存器=0xFF等起始条件。','当前截图可见：未接外线。','讲义原程序的P3输入条件依赖正常复位。真实硬件仍需要可靠复位条件。',3];return [`U1.${n} · 未用引脚`,'本实验无可见外部连线','该引脚在所给截图里未接入本实验的T0输入或P1显示网络。本讲义保留它的名称和编号，帮助定位芯片端口。','未连接到当前的脉冲计数/LED支路。','没有为这些未用引脚编造外围器件，也不因此添加无关学习章节。',5];}
+ return partInfo.U1;
+}
+
+const registerDefs={
+ TMOD:{cn:'定时/计数器方式寄存器',en:'Timer/Counter Mode',addr:'89H',value:6,names:['GATE1','C/T1','M1₁','M0₁','GATE0','C/T0','M1₀','M0₀'],text:'8位，非位寻址。高4位配置T1，低4位配置T0。它选择计数来源、位宽/重装结构及门控条件，不负责启动。原程序整字节写0x06，同时将T1配置清零。',deep:'TMOD不是可位寻址寄存器，不能把TMOD.2直接当成C51的sbit对象。要修改它的某一位通常使用掩码进行字节操作。更改模式前应停止相关计数器，避免运行中状态混杂。'},
+ TCON:{cn:'定时/计数器控制寄存器',en:'Timer/Counter Control',addr:'88H',value:16,names:['TF1','TR1','TF0','TR0','IE1','IT1','IE0','IT0'],text:'8位，可位寻址。这里关心D4的TR0运行控制位与D5的TF0溢出标志。按复位后执行原初始化的时刻显示0x10；第一次溢出后TF0=1时会变成0x30（其他位不变的条件下）。',deep:'TF0可以由软件清零，也会在CPU响应T0中断并转入中断向量时被硬件清零。当前代码没有开中断，也没有TF0=0，所以TF0一旦溢出置1会保持；它不会阻止TL0继续计数和自动重装。TCON低四位属于外部中断控制，不把这些事件标志做成任意点击的开关。'},
+ TH0:{cn:'T0高字节寄存器',en:'Timer 0 High Byte / Reload',addr:'8CH',value:0,names:['bit7','bit6','bit5','bit4','bit3','bit2','bit1','bit0'],text:'8位，当前方式2下保存自动重装值0x00。TL0溢出时把TH0的值复制到TL0，TH0自身不变。名称里的“高字节”不能取代具体工作方式分析。',deep:'只有方式1等级联结构才把TH0和TL0看成高低字节组成的整体。方式2中更改TH0不立刻改变TL0；下一次溢出才使用新的重装值。若TH0=N，则稳定阶段每256−N个有效计数事件溢出一次；首轮仍由TL0初值决定。'},
+ TL0:{cn:'T0低字节寄存器',en:'Timer 0 Low Byte / Counter',addr:'8AH',value:0,names:['bit7','bit6','bit5','bit4','bit3','bit2','bit1','bit0'],text:'8位，在当前方式2中是实际工作的计数单元。每个被芯片接受的外部下降沿使其递增一次；从0xFF溢出时装入TH0，而不是简单地向TH0进位。',deep:'单次8位读取不会出现读取16位高低字节不一致的问题，但只能得到某个瞬间的快照。CPU读取和写P1需要时间，显示可能落后于最新输入；高频输入下也不保证每一个中间值都能被肉眼看到。'},
+ P1:{cn:'端口1锁存器',en:'Port 1',addr:'90H',value:255,names:['P1.7','P1.6','P1.5','P1.4','P1.3','P1.2','P1.1','P1.0'],text:'8位准双向端口。本例把它当输出使用，当前图显示首次刷新且TL0=0时写入的0xFF，八灯全灭。TL0中的某位为1，取反后该端口位为0，使对应LED亮。',deep:'端口写入的是锁存器，而实际引脚电压还受外部电路与驱动能力影响。截图中的220Ω是给定仿真参数，不自动证明真实芯片每脚和总电流都满足限制；实物需要按数据手册核算。'},
+ P3:{cn:'端口3锁存器',en:'Port 3',addr:'B0H',value:255,names:['P3.7','P3.6','P3.5','P3.4','P3.3','P3.2','P3.1','P3.0'],text:'8位准双向端口，P3.4的第二功能是T0输入。此图显示正常复位后的锁存器0xFF；输入外部低电平时，引脚为0不代表锁存器必须写成0。',deep:'准双向口用作输入或输入型第二功能时，需要对应锁存器保持1，从而允许外部信号控制引脚。原代码未写P3，依赖复位状态；如果前面的程序把P3.4写0，单靠上拉电阻不能恢复输入。可显式置1，但不把这条补充写进截图原程序。'}
+};
+function bitDescription(reg,pos){
+ if(reg==='TMOD'){
+  const t=pos>=4?1:0,p=pos%4;
+  if(p===3)return `GATE${t}：0时只由TR${t}控制运行许可；1时还要求INT${t}引脚为高。注意它是电平门控，不是把INT引脚改成计数输入。`;
+  if(p===2)return `C/T${t}：0选择内部时钟定时；1选择T${t}引脚外部计数。T0输入是P3.4，T1输入是P3.5。`;
+  return `T${t}方式选择位${p===1?'M1':'M0'}。需把两位合起来看：00=方式0（13位），01=方式1（16位），10=方式2（8位自动重装），11=方式3。T0方式3把TL0、TH0分开；T1自身方式3为停止，不能统一解释为双8位。`;
+ }
+ if(reg==='TCON')return [
+  'IT0：外部中断0触发类型，0为低电平，1为下降沿。当前未使用INT0中断。',
+  'IE0：外部中断0请求标志，语义依IT0触发类型而变。本实验没有把脉冲接到INT0。',
+  'IT1：外部中断1触发类型。不能用IT1去设置T0的计数边沿。',
+  'IE1：外部中断1请求标志，本实验不使用它计数。',
+  'TR0：软件运行控制位。1允许运行，0暂停；GATE0=1时还需INT0为高。置1不清零TL0、TH0或TF0。',
+  'TF0：T0溢出标志。由溢出硬件置1，可由软件清0；响应T0中断时也由硬件清0。本例没有中断服务，因此不会因为重装完成就自动清0。',
+  'TR1：T1运行控制。本实验不启动T1。',
+  'TF1：T1溢出标志。本实验不用它处理T0溢出。'
+ ][pos];
+ if(reg==='P3'&&pos===4)return 'P3.4锁存器：1时允许外部信号控制引脚，作为T0输入。锁存器的1与外部实际引脚的高/低是两种状态，不能混同。';
+ if(reg==='P1')return `P1.${pos}，PDIP第${pos+1}脚。0对应本电路D${pos+1}亮，1对应灭；它显示的是TL0的第${pos}位经反相后的输出。`;
+ if(reg==='P3')return `P3.${pos}锁存器。当前图给出复位状态1；本实验只有P3.4接入T0计数输入，其余位不做任意修改。`;
+ return `${reg}的第${pos}位，权值2^${pos}=${2**pos}。8位合起来表示0～255；这是数据位，不是独立的启动控制或溢出标志。`;
+}
+const comparisons=[
+ ['定时器模式','计数器模式','定时器用内部时钟；计数器用外部Tx输入事件。','当前C/T0=1，T0没有有效输入时，即使CPU一直执行while循环，TL0也不因时间流逝而自增。','名称“定时器0”是外设名称，不代表它只能用于定时。'],
+ ['软件计数','硬件计数','软件计数通过CPU语句修改变量；硬件计数由外设改变寄存器。','本例没有count变量或count++，CPU只执行P1=~TL0刷新。','软件延时不会自动给T0外部输入做消抖。'],
+ ['TR0','TF0','TR0控制是否运行；TF0记录是否曾经溢出。','第11行TR0=1启用计数；第256次有效事件后TF0置1，TR0仍可为1。','清TF0不清TL0；清TR0也不清TL0。'],
+ ['TH0','TL0','当前方式2中，TH0存重装值，TL0实际计数。','TH0=0、TL0=255，下一次有效事件让TL0装0而TH0仍0。','不要把方式1的16位进位关系套用到方式2。'],
+ ['T0输入','外部中断输入','T0/P3.4给计数器提供事件；INT0/P3.2、INT1/P3.3用于外部中断等功能。','当前没有interrupt函数，也没有IE中断使能。','GATE=1时INT0可门控T0，但输入计数脉冲仍是T0。'],
+ ['稳定电平','电平跳变','高/低是状态；上升/下降沿是两种状态间的变化。','开关闭合后保持低电平，不会一直连续加数；断开形成上升沿不直接加数。','真实芯片必须先采到高、再采到低；极窄毛刺可能被漏采。'],
+ ['初始化方式','启动控制','TMOD选择怎样工作，TH0/TL0设起点，TR0决定何时开始。','程序按配置→重装值→首轮值→启动的顺序执行。','从调试器中途跳入main不等于硬件复位；复用代码时应考虑先停止T0。'],
+ ['输出为1','LED亮','电平高低与发光结果取决于电路连接。','本电路P1=0xFE时D1亮；灯亮表示TL0的bit0是1。','“灯亮表示1”指计数数据，不表示端口一定输出高电平。']
+];
+const questions=[
+ ['C51代码','为什么需要#include <reg51.h>？','它给出8051寄存器和位的定义，代码才能用TMOD、TR0、P1这些名字操作硬件。','头文件在编译前被处理，提供特殊功能寄存器及位声明；它不会在芯片运行时加载文件，也不自动初始化定时器。删除它且没有等效声明会使相关标识符无法解析。',[['包含头文件后T0会启动吗？','不会。TMOD、初值和TR0仍需程序显式设置。']],1],
+ ['C51代码','while(1)在本实验中做什么？','一直读取TL0并刷新P1显示，计数本身由T0硬件完成。','条件1恒为真。循环反复执行P1=~TL0，没有逐个读取P3.4并软件加1。循环速度影响显示更新速度，不直接决定硬件计数是否发生。',[['如果把while去掉呢？','显示只更新一次；之后计数器可能继续变化，但P1不会自动跟随。']],13],
+ ['C51代码','P1=~TL0中的~为什么不能省略？','LED是低电平点亮，取反后能让计数位1对应灯亮。','TL0=1时为0000 0001B，写P1后的低8位为1111 1110B，即0xFE，P1.0为0，D1亮。去掉取反后显示为与计数互补的亮灭位图，计数0时反而八灯全亮。',[['~与!有什么区别？','~逐位取反；!是逻辑非，结果只有0或1，不能输出八位反相计数。']],15],
+ ['C51代码','P1=255-TL0能代替P1=~TL0吗？','本例TL0取值0～255且结果写入8位P1时，输出位图相同。','前提是相同的8位无符号数据快照、单次读取和8位输出。中间类型、指令和运行时间不一定相同；不能推广到所有整数类型，更不能在比较两次实际运行结果时忽略TL0可能已经变化。',[['P1=~TL0会把TL0改掉吗？','不会。它读取TL0，运算后只把结果写给P1。']],15],
+ ['C51代码','原程序没有把P3.4置1，为什么仍可能正常？','正常复位后P3锁存器是0xFF，原程序也不再改它，所以P3.4已处于允许输入的状态。','P3是准双向口，输入型第二功能需要对应锁存器为1。原代码依赖复位条件；若此前软件把P3.4锁存器清零而未复位，就不能保证。显式置1是可选的稳健初始化，不属于截图原句。',[['P3=0x10可以吗？','会把其余七位写0，副作用较大。可选P3|=0x10或合适的sbit位赋值。'],['sbit t0=P3^4中的^是异或吗？','这里是Keil C51位声明的特殊语法，用于选定P3.4，不是运行时异或表达式。']],11],
+ ['C51代码','硬件每收到一个脉冲，会自动执行一条count++吗？','不会。T0硬件对被接受的下降沿递增TL0，CPU持续执行显示循环。','这里没有count变量、count++、外部中断处理或定时器中断服务。必须区分外设工作路径与CPU指令路径；并非每个脉冲都让CPU跳转到某行C代码。',[['CPU不立即刷新会漏掉计数吗？','符合采样条件的硬件计数仍可进行，但显示可能滞后；8位计数溢出后不能仅靠当前值恢复累计总数。']],15],
+ ['C51代码','为什么不能把TMOD=0x06随便改成|=0x06？','按位或只会置1，不会清除原来的模式位，可能得到错误方式。','若原TMOD低位为0001B，|0x06后会得到0111B，即方式3，而不是方式2。需要清掉待配置字段再写入目标值；(TMOD&0xF0)|0x06可以只替换T0字段，但它与整字节覆盖的副作用不同。',[['为什么原句会影响T1？','TMOD是8位字节，直接赋0x06会把高四位也清零。']],5],
+ ['寄存器与原理','TMOD为什么是0x06，而不是0x05？','GATE0=0、C/T0=1、M1M0=10，低四位是0110，所以是0x06；0x05是方式1。','高四位清零，T0低四位按D3～D0排列为0、1、1、0，得到0000 0110B。方式2以TL0做8位计数并从TH0自动重装；0x05的M1M0=01会组成16位计数器。',[['改成0x01呢？','C/T0=0且方式1，将成为内部时钟定时，不再由T0下降沿控制计数。'],['配置TMOD后为什么还要TR0=1？','TMOD只决定工作结构，TR0才是运行控制。']],5],
+ ['寄存器与原理','TH0和TL0都置0，作用一样吗？','当前方式2下不一样：TL0是首轮计数起点，TH0是溢出后的重装值。','TH0=0保证后续周期从0重装；TL0=0保证第一轮也从0开始。设置TH0不会立即把它复制到TL0，二者要分别初始化。',[['只把TH0改为0xF0会怎样？','TL0初值仍0时首轮256个事件溢出，之后每16个事件溢出一次。']],7],
+ ['寄存器与原理','TR0和TF0有什么区别？','TR0管运行，TF0记溢出。TR0置1不清零，TF0置1也不会自动停止计数。','TR0是TCON.4，TF0是TCON.5。TR0在GATE配合条件下控制计数许可；TF0由溢出硬件置1。本例既没有开T0中断，也没在软件中清TF0，所以溢出后它会保持1。',[['TF0一定必须手动清吗？','不能一概而论。软件可清0，CPU响应T0中断时也会由硬件清0；当前无中断程序中若想再次用它检测溢出，就需软件适当处理。']],11],
+ ['寄存器与原理','第256个有效计数事件后发生什么？','TL0从0xFF溢出并自动装入TH0的0，TF0置1；TH0仍是0，下一次刷新后八灯全灭。','前提是从TL0=0开始且TH0=0、TR0持续为1。方式2不是16位级联，不能说此时TH0加1。TF0置1不阻止后续计数。',[['只看TL0能区分0次和256次吗？','不能，二者当前8位计数同为0。要记累计总数需额外的可靠溢出统计或更宽的计数方案。']],9],
+ ['寄存器与原理','T0对哪一种变化计数？','对芯片采样识别到的高到低变化，也就是有效下降沿。','经典AT89C51不是对网页点击或任意瞬间毛刺直接加1。需要相邻采样出现高后低；高低各至少保持一个完整机器周期能保证各自被采到。计数值更新还有硬件内部时序。',[['一直保持低电平会连续加吗？','不会，必须重新采到高再采到低才形成下一个下降沿。']],5],
+ ['寄存器与原理','计数器模式也需要单片机时钟吗？','需要。输入事件来自外部，但芯片仍要依靠内部时钟采样并识别它。','经典12时钟AT89C51的机器周期为12/fosc；外部最高计数率受约fosc/24限制，高低持续时间也要满足采样要求。该结论不直接套用到所有1T/6T兼容器件。',[['11.0592MHz时理论上限是多少？','按经典12时钟条件计算是460800Hz；这是时序上限示例，不是截图已设置的输入频率。']],5],
+ ['寄存器与原理','GATE=0与GATE=1有什么区别？','GATE=0时由TR0控制；GATE=1时TR0还要配合INT0引脚高电平才允许T0运行。','T0的运行许可可写作TR0 AND（NOT GATE0 OR INT0）。这里INT0是P3.2物理引脚电平。GATE不把计数输入从T0改接到INT0，也不是外部中断使能。',[['本实验为什么用GATE=0？','只需TR0控制持续计数，不要求另一根引脚提供门控条件。']],5],
+ ['硬件与Proteus','P3.4/T0是哪一脚，为什么不能接P3.3？','当前40脚AT89C51中是第14脚；P3.3是INT1，不是T0输入。','TMOD的C/T0=1让T0使用P3.4第二功能。把开关误接P3.3时，当前程序没有外部中断1处理，也不会把这条信号送到T0。',[['设置IT1能让P3.4改成上升沿计数吗？','不能。IT1控制INT1中断触发类型，不控制T0的计数边沿。']],5],
+ ['硬件与Proteus','R1=10kΩ有什么作用？','它上拉T0节点，让开关断开时为高；开关闭合时该节点被接地拉低。','它和开关构成清楚的高低状态来源。P3已有内部上拉但截图仍加了R1。它不是消抖元件，也不能把软件写0的端口锁存器“强制变成输入”。',[['R1直接接地而开关接电源可以随便换吗？','那会改变空闲电平和脉冲极性，需要重新核对边沿、驱动和电流通路，不能声称拓扑完全等价。']],11],
+ ['硬件与Proteus','R2～R9为什么每路都要一只？','每只电阻分别限制对应LED的电流，防止把八路当成一个共用限流支路。','源图每路220Ω，LED阳极侧经电阻到公共电源，阴极到各P1位。精确电流还依赖供电、LED压降、端口压降及驱动极限，图中没有给出足够信息直接认定真实电流。',[['220Ω一定适合所有8051实物吗？','不能。真实搭建应核对具体芯片每脚、端口总电流和LED参数。']],15],
+ ['硬件与Proteus','为什么TL0=1时最上面的灯亮？','原图最上面对应P1.0；TL0=1取反得P1=0xFE，P1.0输出0，点亮这一灯。','图的上下顺序是bit0到bit7；通常写二进制数则从bit7到bit0。不要把最上面灯误认为权值128。二进制5会点亮D1与D3。',[['八灯全亮表示多少？','在本电路与原程序下表示TL0=255，P1=0。']],15],
+ ['硬件与Proteus','Proteus里需要核对哪些参数？','核对芯片型号、编译得到的HEX路径、时钟频率以及输入信号和电源网络。','Program File应指向当前代码编译生成的HEX；时钟影响采样，不应把实验仪11.0592MHz自动认作截图设置。开关模型及其是否模拟抖动、隐藏电源都应查看工程属性。',[['图里没画晶振，实物也能省吗？','不能。局部仿真截图不能替代真实硬件的供电、时钟、复位和EA接法。']],3],
+ ['综合分析','这个实验为什么没有软件消抖？','它用硬件计数，指导书输入来自单脉冲发生器，期望给T0提供干净脉冲；硬件计数本身不会自动消抖。','原图接地开关与实验仪单脉冲源不是同一个对象。若实际机械触点产生多个满足采样条件的下降沿，T0会多计。简单给显示循环加延时并不能阻止硬件在延时期间继续计数。',[['看到一次开关动作计了好几次怎么办？','先核对信号源/模型是否有抖动；必要时使用合适的硬件整形、消抖或重新设计采集方案，不能仅慢刷LED。']],11],
+ ['综合分析','把负脉冲换成正脉冲，代码一定要改吗？','不一定。只要仍产生可被采样识别的下降沿就能计数，但计数发生的时刻会改变。','负脉冲通常空闲高，开始的下降沿计数；正脉冲通常空闲低，上升时不计数，结束回低的下降沿计数。还要检查高低电平、宽度、极性和起始状态，避免把“正脉冲不能计数”当结论。',[['正脉冲上升沿能让T0计数吗？','本例经典T0没有改成上升沿计数的TMOD选项；若必须在该时刻计数，需要外部反相或另选方案。']],5],
+ ['综合分析','改成方式1后显示会怎样，原理有何变化？','把TMOD改成0x05后是16位外部计数，TL0溢出向TH0进位；若仍只读TL0，八灯仍呈现低8位循环。','显示相似不等于计数结构相同。方式1下0x00FF的下一次有效事件形成0x0100，TF0不会因这次低字节进位就置1；要整个16位溢出才置TF0。方式2则每次TL0溢出都装TH0并置TF0。',[['这说明方式2不符合指导书吗？','不能这样说。指导书要求T0计数并显示TL0八位，没有限定必须用16位方式；当前用户指定源码采用方式2。']],5],
+ ['综合分析','TL0=0时八灯全灭，是否能证明没有脉冲？','不能。也可能刚好经历256次循环，或显示还没刷新。','当前8位计数丢失更高位累计信息；同一个TL0结果可能对应多个总次数。还要核对TR0、输入连线和CPU刷新是否正常，不能只看一帧LED便判定事件总数。',[['能不能用TF0统计所有溢出次数？','TF0只是一位标志，不是队列。多次溢出前若未处理，不能从一直为1恢复发生了几次溢出。']],9],
+ ['综合分析','如果改成十进制数码管显示，需要怎样改变？','增加适当的数码管及驱动/限流和位选电路，软件把计数值转成十进制各位，再查段码并按需要扫描。','这是指导书的思考题。0～255通常需要3位十进制显示，需核对共阳/共阴、段电流、位选驱动及可用端口；可按课程硬件选译码器或扩展器件，不能未确认就规定必须某个型号。当前P1直接八位取反不足以驱动多位十进制显示。',[['软件计数部分必须改成按键扫描吗？','不必。仍可保留T0硬件计数，只改变读取后的数据转换与显示驱动。']],15]
+];
+
+function codeModule(){return `<p class="section-intro">原始程序负责配置T0与刷新显示，真正的递增由计数器硬件完成。点击代码行看解析，点击带虚线的语法元素看定义。</p><div class="code-grid"><div class="codebox"><div class="codebar"><span>ShiYan3.c <span style="color:#71849c">/ 当前截图转录</span></span><button class="btn" id="copyCode">复制代码</button></div><div class="code-scroll" id="codeLines" aria-label="可点击的C51源程序"></div><div class="codefoot">17 LINES · SOURCE PRESERVED / 点击行号或语句阅读<br><button class="btn" id="viewAnalysis">查看第 05 行解析 ↓</button></div></div><aside class="card explain" id="lineExplain" aria-live="polite"></aside></div>
+<div class="note">本次源码是 <strong>TMOD=0x06</strong>，并非提示词中的示例0x05。原代码没有额外添加P3置1、TF0清零或中断语句。前提与可选改法在解释中单独说明。</div>
+${heading('01.1','先看清两条并行路径')}<div class="twocol"><div class="card"><div class="eyebrow">CPU / 软件路径</div><h3>初始化一次，刷新无数次</h3><p>进入 main → 设置 TMOD → 写 TH0、TL0 → 置 TR0 → 反复读取 TL0 并输出 P1。循环中没有按键判断，也没有计数加一语句。</p><p class="small">main之前存在启动环境准备；图不把C语句等同于一条8051机器指令。</p></div><div class="card"><div class="eyebrow">T0 / 硬件路径</div><h3>有效下降沿驱动 TL0</h3><p>P3.4/T0的输入经芯片时钟采样，在运行条件满足且识别到下降沿后改变TL0。硬件不会因为CPU执行到下一行而自动增加计数。</p>${jump(3,'principle','打开采样与计数演示 →')}</div></div>
+${heading('01.2','程序控制流程')}<div class="card" id="flowArea"><p>初始化按顺序执行。到达恒真的 <code>while(1)</code> 后，只重复显示路径；没有正常退出分支，也没有中断分支。</p><div style="overflow:auto"><svg viewBox="0 0 620 450" role="img" aria-label="main进入初始化，检查while恒真条件，执行P1输出后回到条件检查" style="width:100%;min-width:480px;max-width:620px;display:block;margin:20px auto"><defs><marker id="flowArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#C52C22"/></marker></defs><g fill="white" stroke="#171717" stroke-width="1.5"><rect x="140" y="10" width="300" height="50" rx="25"/><rect x="105" y="105" width="370" height="80" rx="4"/><path d="M290 220L405 265L290 310L175 265Z"/><rect x="140" y="365" width="300" height="55" rx="4"/></g><g fill="none" stroke="#C52C22" stroke-width="2" marker-end="url(#flowArrow)"><path d="M290 60V105"/><path d="M290 185V220"/><path d="M290 310V365"/><path d="M440 392H535V265H405"/></g><g fill="#171717" font-family="Consolas,Menlo,Microsoft YaHei,sans-serif" text-anchor="middle" font-size="16"><text x="290" y="41">进入 main</text><text x="290" y="136">TMOD=0x06；TH0=TL0=0</text><text x="290" y="164">TR0=1（初始化仅执行一次）</text><text x="290" y="270">while (1)</text><text x="290" y="398">P1 = ~TL0;</text><text x="340" y="338" font-size="13" fill="#C52C22">真：持续刷新</text><text x="548" y="338" font-size="12" fill="#667085">回到条件</text></g></svg></div><div class="flow" id="flowNodes"></div><div class="flow-note note" id="flowNote" aria-live="polite"></div><div class="row"><button class="btn primary" id="flowNext">下一步</button><button class="btn" id="flowReset">从入口重看</button><small>语句流程导览，不改变硬件演示状态。</small></div></div>
+${heading('01.3','修改代码之前，先核对前提')}<div class="card"><label class="sim-label" for="equivSelect">选择一组原始写法与备选写法</label><select class="select" id="equivSelect">${equivalents.map((e,i)=>`<option value="${i}">${e[0]}</option>`).join('')}</select><div id="equivBody"></div>${fold('深入：位地址和字节地址为什么可能出现相同数值？','<p>TR0的位地址是8CH，表示TCON.4；TH0的字节地址也为8CH。8051对位寻址与字节寻址有不同的地址解释，同一个数值不能在两种语境下互换。<code>TR0=1;</code>由头文件的位声明决定其含义，绝不是把TH0置1。</p>')}</div>`;}
+function diagramView(id,interactive){return `<div class="circuit-toolbar"><span class="tag">SVG / ${interactive?'可选择元器件与导线':'依据765.png重绘'}</span><div class="row"><button class="btn" data-zoom="${id}:-" aria-label="缩小电路图">− 缩小</button><output class="mono small" id="${id}Zoom" aria-label="相对全图的缩放比例">100%</output><button class="btn" data-zoom="${id}:+" aria-label="放大电路图">＋ 放大</button><button class="btn" data-zoom="${id}:reset" aria-label="电路图适合屏幕并回到原位">全图</button><button class="btn" data-zoom="${id}:detail" aria-label="放大到可读引脚的细节尺寸">细节</button></div></div><div class="circuit-viewport" id="${id}" aria-label="电路图，可独立滚动平移" tabindex="0">${circuitSVG(id,interactive)}</div><p class="small circuit-hint">全图查看接线；点「细节」读引脚。在图内滑动或拖动平移；缩放只作用于图纸。</p>${id==='diagram'?'<div class="object-status"><span id="diagramSelection">选中对象：U1 · AT89C51</span><button class="linkbtn" data-jump="2:U1" id="diagramAnalyze">深入解析 →</button></div>':'<div class="object-status"><span id="explorerSelection">对象 / U1</span><button class="btn" id="viewPartExplain">查看元件解析 ↓</button></div>'}`;}
+
+function diagramModule(){return `<p class="section-intro">按你上传的Proteus截图重建可见电路：保留U1引脚、8条LED支路、右侧上拉与接地开关；不补画原图没有显示的晶振或复位外围。</p><div class="drawing-strip"><strong>P3.4 / T0</strong><span>PLATE 02 · 电气连接档案</span></div><div class="card diagram-frame">${diagramView('diagram',true)}<p class="small">用＋/−放大，再在图内双向滚动；手机可单指滑动，浏览器双指缩放也可用。圆点表示电气连接；交叉且无圆点的LED支路线彼此独立。选线的红色定位仅为教学界面高亮，实际连线拓扑保持原样。</p></div><div class="note">源图芯片为<strong>AT89C51</strong>；T0是<strong>P3.4，第14脚</strong>；最上面LED对应<strong>P1.0，第1脚</strong>。电源脚在源图隐藏。图内S1及部分LED序号为教学标记。</div>${jump(2,'netT0','进入电路对象解析 →')}`;}
+function hardwareModule(){return `<p class="section-intro">选择芯片、元器件、关键引脚或导线，即可查看对应说明；手机端说明显示在电路下方。两处电路使用同一份引脚与支路数据。</p><div class="part-chooser" id="partChooser">${[['U1','U1 芯片'],['R1','R1 上拉'],['S1','输入开关'],['netT0','T0 输入网'],['D1','D1 / bit0'],['D8','D8 / bit7'],['R2','220Ω限流'],['supply','电源侧'],['pin31','EA引脚']].map(([id,label])=>`<button class="btn" data-part-select="${id}">${label}</button>`).join('')}</div><div class="circuit-grid"><div>${diagramView('explorer',true)}<p class="small">可点击真实线段或用上方按钮定位；可用Tab与Enter选择图内对象。</p></div><aside class="card part-panel explain" id="partExplain" aria-live="polite"></aside></div>
+${heading('03.1','把图中的对象对应到代码')}<div class="card table-wrap"><table><thead><tr><th>电路对象</th><th>软件关联</th><th>真正发生的事</th></tr></thead><tbody><tr><td>P3.4/T0（14脚）</td><td>${jump(0,'line5','TMOD=0x06')}</td><td>C/T0=1选择外部计数输入；M1M0=10选择方式2。</td></tr><tr><td>开关 / R1节点</td><td>${jump(0,'line11','TR0=1')}</td><td>TR0允许运行；实际事件还需满足采样条件。</td></tr><tr><td>内部TL0计数单元</td><td>${jump(0,'line9','TL0=0x00')}</td><td>先设首轮值，再由硬件递增；TH0提供溢出重装值。</td></tr><tr><td>P1八路LED</td><td>${jump(0,'line15','P1=~TL0')}</td><td>CPU读取计数、反相输出，低电平点亮对应支路。</td></tr></tbody></table></div>
+${heading('03.2','仿真参数：已知与未知分开核对')}<div class="card table-wrap"><table><thead><tr><th>属性</th><th>依据与设置原则</th><th>核验状态</th></tr></thead><tbody><tr><td>Device</td><td>U1=AT89C51；不能替换成其他时序内核后仍照搬全部时序结论。</td><td>截图已确认</td></tr><tr><td>Program File</td><td>用Keil编译当前程序，在Output中生成HEX；U1属性指向该HEX。修改代码后应重新编译，避免加载旧程序。</td><td>实际路径未显示</td></tr><tr><td>Clock Frequency</td><td>指导书写明实验仪为11.0592MHz；若要让仿真与之对照，可据此设置并记录。截图没有显示当前值。</td><td>Proteus实际值待核验</td></tr><tr><td>输入信号</td><td>截图是开关下拉+10kΩ上拉，没有标定频率/占空比的周期信号源。测试时应核对电平与高低持续时间。</td><td>频率、幅度属性未显示</td></tr><tr><td>R1 / R2～R9</td><td>10kΩ上拉 / 每路220Ω限流，LED-RED。</td><td>截图已确认</td></tr><tr><td>隐藏电源 / EA / 时钟复位</td><td>查工程的全局电源网络与器件模型；真实硬件EA应满足片内程序运行条件，不能从局部截图推断可以省略。</td><td>工程文件未提供</td></tr></tbody></table></div>
+${heading('03.3','正常现象应该怎样读')}<div class="card"><p>在正常复位、T0输入空闲高且无意外边沿的前提下，初始化完成并首次刷新后TL0=0、P1=0xFF，八灯全灭。每接受一个下降沿，TL0加1；随后CPU读到它并更新P1。</p><label class="sim-label" for="snapshotSelect">静态教学快照（并非实测Proteus运行记录）</label><select class="select" id="snapshotSelect"><option value="0">0次：全部熄灭</option><option value="1">1次：最上方bit0亮</option><option value="2">2次：bit1亮</option><option value="3">3次：bit0、bit1亮</option><option value="5">5次：bit0、bit2亮</option><option value="128">128次：bit7亮</option><option value="255">255次：八灯全亮</option><option value="256">256次：溢出后全灭</option></select><div id="snapshot"></div><p class="small">下面的灯按bit7→bit0排列，便于读二进制；原电路从上到下是bit0→bit7。显示变化不等于真实累计总次数，TL0只保留本周期的8位状态。</p>${jump(3,'principle','打开输入采样与硬件计数演示 →')}</div>`;}
+function registerModule(){return `<p class="section-intro">先看寄存器的字段，再从实验要求推出0x06。寄存器配置试算与下方方式2原理演示彼此独立，都不会改写模块01的原代码。</p><div id="registerArea" class="card"><div class="register-tabs" id="registerTabs">${Object.keys(registerDefs).map(r=>`<button class="btn" data-reg="${r}">${r}</button>`).join('')}</div><div id="registerBody"></div></div>
+${heading('04.1','0x06 是怎样推出来的？')}<div class="card" id="derivation"><div class="derive"><b>01</b><p><strong>选T0。</strong>脉冲已接P3.4/T0，因此使用TMOD低4位；不把P3.3/INT1混进来。</p></div><div class="derive"><b>02</b><p><strong>数外部事件。</strong>把C/T0设为1。设0则会改为内部时钟定时，输入来源已经不同。</p></div><div class="derive"><b>03</b><p><strong>按当前原程序选方式2。</strong>M1M0=10，TL0做8位计数，TH0保存重装值。八灯显示8位，TH0=0使它在0～255之间循环。</p></div><div class="derive"><b>04</b><p><strong>不用外部门控。</strong>GATE0=0，TR0就能控制运行，无需再用INT0引脚的高电平配合。</p></div><div class="derive"><b>05</b><p><strong>按位合成。</strong>高4位写0000，低4位[GATE0,C/T0,M1,M0]=[0,1,1,0]。<code>0000 0110B = 0×8 + 1×4 + 1×2 + 0×1 = 6D = 0x06</code>。</p></div><div class="note good">TH0=0、TL0=0是计数起点与重装值，不是按某个毫秒数算出的定时初值。这里数的是外部事件，不能拿定时器预装公式硬套一个“100ms”。</div>${fold('深入：若把方式改成1，为什么LED仍可能看起来一样？','<p>方式1（0x05）形成16位TH0:TL0，TL0从FFH回00H时向TH0进位；只有整个16位从FFFFH溢出才置TF0。若CPU仍仅输出TL0，LED每256次重复的现象相似，但高字节和溢出标志已经不同。方式2（0x06）则TL0每次溢出都从TH0重装并置TF0，TH0不递增。</p>')}</div>
+${heading('04.2','下降沿、采样、计数与显示')}<div class="card" id="principle"><div class="badge-line"><span class="tag">教学模型 / 固定方式2</span><span class="small">非指令级或Proteus仿真</span></div><h3>输入变化，不等于立刻看到灯变。</h3><p>本模型保留“相邻采样为高后低才认定事件”的关键机制。手动采样表示推进一个机器周期；识别下降沿后，在下个周期提交计数，简化对应芯片内部的更新延迟。它不模拟S状态内部波形、电压阈值或亚稳态。</p><div class="sim-stats" id="simStats"></div><svg id="wave" class="sim-wave" viewBox="0 0 640 120" role="img" aria-label="最近机器周期的采样电平"><text x="14" y="18">T0 / 最近采样</text><text x="14" y="43">H</text><text x="14" y="91">L</text><path class="wavepath" id="wavePath"/><text x="400" y="112">每格 = 一个机器周期的采样</text></svg><div class="leds" id="simLeds"></div><div class="row"><button class="btn" id="setHigh">输入置高</button><button class="btn" id="setLow">输入置低</button><button class="btn primary" id="sample">推进一个采样周期</button><button class="btn" id="cleanPulse">一次合格负脉冲</button></div><div class="row" style="margin-top:10px"><button class="btn" id="shortPulse">采样间隙内的窄脉冲</button><button class="btn" id="bouncePulse">三个合格下降沿（抖动示例）</button><button class="btn" id="autoPulse">连续输入</button><button class="btn" id="pausePulse" disabled>暂停</button><button class="btn" id="resetSim">重置演示</button></div><div class="log" id="simLog" role="status"></div><div class="row"><button class="btn" id="toggleTR">TR0：运行中</button><button class="btn" id="clearTF">软件清 TF0</button><button class="btn" id="toggleCPU">CPU：自动刷新显示</button><button class="btn" id="refreshCPU">执行一次 P1 刷新</button></div><p class="small">TR0暂停不会清零；TF0清零不改变TL0；关闭CPU自动刷新只冻结显示。合格负脉冲按钮按预设采样序列送入高→低→低→高，故能产生一次计数；不代表任意真实点击都能被芯片识别。</p><details><summary>深入实验：查看溢出与重装（修改演示状态）</summary><div><p>先暂停连续输入并将TR0停止，再设置TL0/TH0。这样把“装载初值”与“运行中硬件递增”明确分开。以下是教学状态，不写回原代码。</p><div class="sim-grid"><div class="sim-field"><label for="preTL">TL0 初值（十进制0～255）</label><input id="preTL" type="number" min="0" max="255" value="254" inputmode="numeric"></div><div class="sim-field"><label for="preTH">TH0 重装值（十进制0～255）</label><input id="preTH" type="number" min="0" max="255" value="0" inputmode="numeric"></div></div><button class="btn" id="applyPreload" style="margin-top:12px">装载教学初值</button><p class="small">TH0=0、TL0=254，再启动并输入两次合格脉冲：254→255→0，同时TF0置1。把TH0改为240，溢出后TL0会装240，TH0保持240。</p></div></details></div>
+${heading('04.3','时钟仍然决定能不能采到')}<div class="card"><p>外部计数并非“不用时钟”。对本例经典12时钟AT89C51，一个机器周期T<sub>MC</sub>=12/f<sub>osc</sub>。为保证采样，高、低各应至少维持一个机器周期；外部计数最高频率受f<sub>osc</sub>/24限制。占空比不必固定50%，但两段电平都要足够长。</p><div class="row"><label for="clockMHz">时钟示例 / MHz</label><input class="select" id="clockMHz" type="number" step="0.0001" min="0.001" max="24" value="11.0592" style="width:150px"><button class="btn" id="clockCalc">重新计算</button></div><div class="note" id="clockResult"></div><p class="small">11.0592MHz来自指导书对实验仪的说明；输入框是推导示例，未确认截图Proteus设置。公式不推广到所有8051衍生芯片，也不代表实际信号已经达到这个频率。</p></div>
+${heading('04.4','把容易混淆的概念放在一起')}<div class="card table-wrap"><table><thead><tr><th>概念A / B</th><th>核心区别与本例</th><th>易错提醒</th></tr></thead><tbody>${comparisons.map(c=>`<tr><td><strong>${c[0]}</strong><br>${c[1]}</td><td>${c[2]}<br><span class="muted">${c[3]}</span></td><td>${c[4]}</td></tr>`).join('')}</tbody></table></div><div class="note good"><strong>复习时抓住这条链：</strong>配置0x06 → TH0/TL0置0 → TR0启动 → P3.4接受有效下降沿 → TL0硬件递增/溢出自动重装 → CPU读TL0并取反 → P1低电平点亮计数中的1。</div>`;}
+function qaModule(){return `<p class="section-intro">24道针对当前代码与电路的检查题。先尝试口述，再分别展开简答、原理和连续追问；答案默认隐藏。</p><div class="qa-tools"><input class="search" id="qaSearch" placeholder="查找问题或答案，如：TH0、正脉冲、消抖" aria-label="搜索教师问题"><select class="select" id="qaCategory" aria-label="按类别筛选"><option value="">全部类别</option>${['C51代码','寄存器与原理','硬件与Proteus','综合分析'].map(v=>`<option>${v}</option>`).join('')}</select><button class="btn" id="collapseAnswers">收起全部答案</button></div><p class="small" id="qaCount"></p><div id="questions"></div>`;}
+const modules=[codeModule,diagramModule,hardwareModule,registerModule,qaModule];
+$('#nav').innerHTML=names.map((n,i)=>`<button aria-label="模块0${i+1} ${n}" class="navbtn${i===0?' active':''}" data-module="${i}" aria-current="${i===0?'page':'false'}"><b>0${i+1}</b><span>${n}</span></button>`).join('');
+const chapterIdentity=[['指令档案 / INSTRUCTION ARCHIVE','C51<br>代码精讲','C51','code'],['工程图纸 / WIRING ARCHIVE','硬件电路<br>连接示意','T0','draft'],['结构解剖 / CIRCUIT ANATOMY','Proteus 硬件<br>电路讲解','U1','anatomy'],['数字构成 / REGISTER COMPOSITION','寄存器与<br>核心知识点','0110','data'],['考试档案 / EXAMINATION ARCHIVE','常见教师提问<br>与答案解析','Q.','exam']];
+$('#modules').innerHTML=modules.map((fn,i)=>`<section class="module" data-style="${chapterIdentity[i][3]}" id="module${i}" aria-labelledby="moduleTitle${i}" ${i?'hidden':''}><header class="module-header"><span class="module-number" aria-hidden="true">0${i+1}</span><div class="module-heading"><div class="kicker">${chapterIdentity[i][0]}</div><h2 id="moduleTitle${i}" aria-label="${names[i]}">${chapterIdentity[i][1]}</h2><div class="eyebrow">${english[i]}</div></div><div class="chapter-art" aria-hidden="true"><span class="art-rule"></span><span class="art-type">${chapterIdentity[i][2]}</span><small>8051 / VOL.03</small></div></header>${fn()}</section>`).join('');
+
+let currentModule=0,selectedLine=5,selectedPart='U1',selectedReg='TMOD',selectedBit=2,tmodDemo=6,flowIndex=0;
+const scrollPositions=[0,null,null,null,null],navStack=[];
+function toast(msg){$('#toast').textContent=msg;$('#toast').hidden=false;clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('#toast').hidden=true,3200);}
+function showModal(title,body){$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;const m=$('#modal');if(!m.open){if(m.showModal)m.showModal();else m.setAttribute('open','');}}
+function closeModal(){const m=$('#modal');if(m.close)m.close();else m.removeAttribute('open');}
+$('#closeModal').onclick=closeModal;$('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal();});
+$('#sourcesBtn').onclick=()=>showModal('资料依据与技术核验',reconstructionReport+sourcesHTML);
+function highlightCode(text){
+ const ci=text.indexOf('//'),main=ci<0?text:text.slice(0,ci),comment=ci<0?'':text.slice(ci);
+ const regex=/#include|<reg51\.h>|\b(?:void|while|TMOD|TH0|TL0|TR0|P1)\b|0x[0-9A-Fa-f]+|[=~]|\b1\b/g;
+ let out='',last=0;for(const m of main.matchAll(regex)){out+=esc(main.slice(last,m.index));const token=m[0];let key=token,cl='';if(token==='<reg51.h>')key='reg51.h';if(/^0x/.test(token)||token==='1'){key=token==='1'?'integer':'hex';cl='num';}else if(['void','while','#include'].includes(token))cl='keyword';else if(['TMOD','TH0','TL0','TR0','P1'].includes(token))cl='reg';out+=`<button class="tok ${cl}" data-syntax="${key}" aria-label="解释 ${esc(token)}">${esc(token)}</button>`;last=m.index+token.length;}
+ return out+esc(main.slice(last))+(comment?`<span class="comment">${esc(comment)}</span>`:'');
+}
+$('#codeLines').innerHTML=sourceLines.map((l,i)=>`<div class="code-line" data-line="${i+1}" role="group" aria-label="第${i+1}行${l?'':' 空行'}"><button class="line-select" aria-label="选择第${i+1}行${l?'':' 空行'}">${i+1}</button><span class="code-text">${highlightCode(l)}</span></div>`).join('');
+function selectLine(n,scroll=false){
+ selectedLine=n;$$('.code-line').forEach(el=>{const on=Number(el.dataset.line)===n;el.classList.toggle('selected',on);el.setAttribute('aria-current',String(on));$('.line-select',el).setAttribute('aria-pressed',String(on));});
+ const a=lineInfo[n]||['空行：为了阅读留白','这是一行排版留白，没有可执行语句。','空白行不改变程序控制结构。','无直接硬件操作。','分隔初始化语句，方便阅读。','没有运行状态变化。','删除空行只改变排版，不改变程序逻辑。'];
+ const reg=n===5?'TMOD':n===7?'TH0':n===9?'TL0':n===11?'TCON':n===15?'P1':'';
+ const part=n===5||n===11?'netT0':n===15?'netP10':n===7||n===9?'U1':'';
+ $('#lineExplain').innerHTML=`<button class="btn return-code" id="returnCode">↑ 返回代码阅读处</button><span class="line-label">SOURCE LINE / ${String(n).padStart(2,'0')}</span><h3>${esc(sourceLines[n-1].split('//')[0].trim()||'空行')}</h3><strong style="font-size:15px">${a[0]}</strong>${['语句作用','C51语法','8051硬件联系','为什么这样写','执行后的影响'].map((label,i)=>`<h4>${label}</h4><p>${a[i+1]}</p>`).join('')}${fold('删除 / 修改会怎样？',`<p>${a[6]}</p>`)}<div class="row" style="margin-top:16px">${reg?jump(3,reg,'寄存器 '+reg+' →'):''}${part?jump(2,part,'查看对应电路 →'):''}</div>`;
+ if($('#viewAnalysis'))$('#viewAnalysis').textContent='查看第 '+String(n).padStart(2,'0')+' 行解析 ↓';
+ if(scroll){const el=$(`.code-line[data-line="${n}"]`),box=$('#codeLines');box.scrollTop=Math.max(0,el.offsetTop-90);}
+}
+function showSyntax(key){const a=syntax[key];if(!a)return;const reg=registerDefs[key]?key:key==='TR0'?'TCON':'';showModal(a[0],`<p>${a[1]}</p><pre><code>${esc(a[2])}</code></pre><h4>本实验中的用途与提醒</h4><p>${a[3]}</p>${reg?jump(3,reg,'查看寄存器完整说明 →'):''}`);}
+function renderFlow(){
+ const unique=flowSteps.slice(0,7);$('#flowNodes').innerHTML=unique.map((s,i)=>`<div class="flow-node ${(i===flowIndex||(flowIndex===7&&i===5))?'current':''}"><strong>${String(i+1).padStart(2,'0')} / LINE ${s[0]}</strong>${s[1]}${i===5?'<br><small>条件1 → 总为真</small>':''}${i===6?'<br><small>循环回第13行 ↺</small>':''}</div>`).join('');
+ const s=flowSteps[flowIndex];$('#flowNote').innerHTML=`<strong>步骤 ${flowIndex+1} / ${s[1]}</strong><br>${s[2]}`;
+}
+function renderEquiv(){const a=equivalents[Number($('#equivSelect').value)];$('#equivBody').innerHTML=`<h4 style="margin-top:22px">原始写法</h4><pre><code>${esc(a[1])}</code></pre><h4>可选写法 / 独立教学示例</h4><pre><code>${esc(a[2])}</code></pre><p>${a[3]}</p><div class="note warn">${a[4]}</div>${Number($('#equivSelect').value)===3?`<div class="row"><button class="linkbtn" data-syntax="sbit">解释sbit与^</button><button class="linkbtn" data-syntax="|=">解释|=</button></div>`:''}`;}
+$('#equivSelect').onchange=renderEquiv;
+$('#flowNext').onclick=()=>{flowIndex=flowIndex===7?5:flowIndex+1;renderFlow();selectLine(flowSteps[flowIndex][0]);};
+$('#flowReset').onclick=()=>{flowIndex=0;renderFlow();selectLine(3);};
+async function copyCode(){
+ try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(originalCode);toast('完整C51代码已复制');return;}}catch(e){}
+ const area=document.createElement('textarea');area.value=originalCode;area.style.cssText='position:fixed;left:-10000px;top:0';document.body.append(area);area.select();let ok=false;try{ok=document.execCommand('copy');}catch(e){}area.remove();if(ok)toast('完整C51代码已复制');else showModal('复制代码',`<p>浏览器限制了自动复制。长按或选择下方全文复制。</p><textarea aria-label="完整代码" style="width:100%;height:330px;font:12px/1.7 var(--mono)">${esc(originalCode)}</textarea>`);
+}
+$('#copyCode').onclick=copyCode;
+const zoomState={diagram:1,explorer:1};
+function fitDiagram(id){
+ const box=$('#'+id);if(!box.clientWidth)return;
+ const w=box.clientWidth*zoomState[id],svg=$('svg',box);
+ svg.style.width=w+'px';svg.style.height=(w*930/1120)+'px';
+ $('#'+id+'Zoom').textContent=Math.round(zoomState[id]*100)+'%';
+}
+function zoom(id,how){
+ const b=$('#'+id);if(!b.clientWidth)return;
+ if(how==='reset')zoomState[id]=1;
+ else if(how==='detail')zoomState[id]=Math.max(1,1120/b.clientWidth);
+ else zoomState[id]=Math.max(.5,Math.min(6,zoomState[id]+(how==='+'?.25:-.25)));
+ fitDiagram(id);if(how==='reset'||how==='detail'){b.scrollLeft=0;b.scrollTop=0;}
+}
+function selectPart(id,focus=false){
+ selectedPart=id;const a=getPart(id);$('#partExplain').innerHTML=`<span class="info-label">SELECTED OBJECT / ${esc(id)}</span><h3>${a[0]}</h3><span class="tag">${a[1]}</span><h4 style="margin-top:23px">功能与本实验中的作用</h4><p>${a[2]}</p><h4>连接关系</h4><p>${a[3]}</p><div class="note">${a[4]}</div><div class="row">${jump(0,'line'+a[5],'查看关联C51代码 →')}${jump(3,id==='netT0'||id==='pin14'?'TMOD':a[5]===15?'P1':'TCON','关联寄存器 →')}</div>`;
+ const linked=[id];if(/^D[1-8]$/.test(id))linked.push('netP1'+(Number(id.slice(1))-1));if(/^R[2-9]$/.test(id))linked.push('netP1'+(Number(id.slice(1))-2));if(id==='R1'||id==='S1'||id==='pin14')linked.push('netT0');if(/^pin[1-8]$/.test(id))linked.push('netP1'+(Number(id.slice(3))-1));
+ $$('#explorer [data-part]').forEach(e=>{e.classList.toggle('picked',linked.includes(e.dataset.part));e.setAttribute('aria-pressed',String(linked.includes(e.dataset.part)));});
+ $$('#partChooser button').forEach(b=>{b.classList.toggle('on',b.dataset.partSelect===id);b.setAttribute('aria-pressed',String(b.dataset.partSelect===id));});
+ $('#explorerSelection').textContent='对象 / '+id+' · 已选中';
+ if(focus&&!matchMedia('(max-width:959px)').matches)$('#partExplain').scrollTop=0;
+}
+function ledHTML(value){return Array.from({length:8},(_,j)=>{const bit=7-j;return `<div class="ledcell">bit${bit}<span class="ledlight${value&(1<<bit)?' lit':''}"></span>D${bit+1}<br>${value&(1<<bit)?'亮 / 1':'灭 / 0'}</div>`;}).join('');}
+function renderSnapshot(){const total=Number($('#snapshotSelect').value),v=total&255;$('#snapshot').innerHTML=`<p class="mono">TL0=${hex(v)} / ${bin(v)}B<br>P1=${hex(~v)} / ${bin(~v)}B</p><div class="leds">${ledHTML(v)}</div>${total===256?'<p class="small">第256次有效事件：TL0重装0，TH0仍0，TF0置1。</p>':''}`;}
+$('#snapshotSelect').onchange=renderSnapshot;
+function tmodExplanation(v){
+ const mode=v&3,ct=!!(v&4),gate=!!(v&8),modes=['方式0：13位','方式1：16位','方式2：8位自动重装','方式3：TL0与TH0分开'];
+ return `<strong>T0：${ct?'外部计数':'内部时钟定时'} / ${modes[mode]}</strong><br>GATE0=${gate?1:0}：${gate?'TR0=1且INT0引脚高电平才允许运行':'由TR0控制运行许可'}。${mode===2?'TL0溢出自动装入TH0；TH0保持不变。':mode===1?'TH0:TL0级联；TL0进位到TH0，整个16位溢出置TF0。':mode===0?'TH0与TL0低5位构成13位；TL0高3位不作为有效计数。':'TL0为8位定时/计数器；TH0为单独8位定时器并占用TR1/TF1资源。'}<br><span class="small">T1字段=${(v>>4).toString(2).padStart(4,'0')}B；M1M0=${(v>>4)&3}，${v&64?'外部计数':'内部定时'}，GATE1=${v&128?1:0}。这里只试算配置，不运行其他模式。</span>`;
+}
+function renderRegister(){
+ const previousFocus=document.activeElement;const focusKey=previousFocus&&$('#registerBody').contains(previousFocus)?(previousFocus.dataset.bit!==undefined?'[data-bit="'+previousFocus.dataset.bit+'"]':previousFocus.id?'#'+previousFocus.id:''):'';
+ const r=registerDefs[selectedReg],v=selectedReg==='TMOD'?tmodDemo:r.value;
+ $$('#registerTabs button').forEach(b=>{const on=b.dataset.reg===selectedReg;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});
+ $('#registerBody').innerHTML=`<span class="info-label">${r.en.toUpperCase()} / SFR ${r.addr}</span><h3>${selectedReg} · ${r.cn}</h3><p>${r.text}</p><div class="row spread"><span class="tag">${selectedReg==='TMOD'?'当前教学配置 / 可修改':'原始初始化快照 / 点击查看位义'}</span><span class="reg-value">${hex(v)} <small>/ ${bin(v)}B / ${v}D</small></span></div><div class="bitscroll"><div class="bitstrip ${selectedReg==='TMOD'?'':'readonly'}">${r.names.map((n,j)=>{const p=7-j;return `<button class="bit ${p===selectedBit?'focused':''}" aria-pressed="${p===selectedBit}" data-bit="${p}" aria-label="D${p} ${n} 值${(v>>p)&1}"><span class="pos">D${p}</span><span class="name">${n}</span><span class="val">${(v>>p)&1}</span></button>`;}).join('')}</div></div><div class="bit-info"><strong>D${selectedBit} / ${r.names[7-selectedBit]}</strong><p>${bitDescription(selectedReg,selectedBit)}</p>${selectedReg==='TMOD'?'<button class="btn" id="flipBit">切换所选位 0 ↔ 1</button>':'<p class="small">字段解释只读；不把硬件标志当普通开关。TR0与TF0的受控操作见下方原理演示。</p>'}</div>${selectedReg==='TMOD'?`<div class="note" id="tmodMode">${tmodExplanation(v)}</div><div class="row"><button class="btn" id="restoreTMOD">恢复原配置0x06</button><span class="small">修改的只是教学值，源程序保持不变。</span></div>`:''}${fold('深入理解：本寄存器的使用边界',`<p>${r.deep}</p>`)}`;
+ if(focusKey){const next=$(focusKey,$('#registerBody'));if(next)next.focus({preventScroll:true});}
+}
+function calculateClock(){const f=Number($('#clockMHz').value);if(!Number.isFinite(f)||f<=0||f>24){$('#clockResult').textContent='请输入大于0且不超过24MHz的示例时钟值。';return;}$('#clockResult').innerHTML=`<strong>经典12时钟AT89C51示例：</strong><br>T<sub>MC</sub> = 12 / (${f}×10⁶) s ≈ ${(12/f).toFixed(6)} μs<br>f<sub>count,max</sub> = ${f}×10⁶ / 24 ≈ ${(f*1e6/24).toLocaleString('en-US',{maximumFractionDigits:3})} Hz<br><span class="small">高电平与低电平各至少维持约${(12/f).toFixed(6)} μs以保证采到；这不是任意脉冲宽度的无条件保证。</span>`;}
+$('#clockCalc').onclick=calculateClock;
+function renderQuestions(){
+ const q=$('#qaSearch').value.trim().toLowerCase(),cat=$('#qaCategory').value;let count=0;
+ $('#questions').innerHTML=questions.map((a,i)=>{if((cat&&a[0]!==cat)||(q&&!JSON.stringify(a).toLowerCase().includes(q)))return '';count++;return `<article class="question"><h3><span class="qnum">Q.${String(i+1).padStart(2,'0')}</span><span>${esc(a[1])}</span></h3><div class="qcategory">${a[0]}</div>${fold('展开简洁口述答案',`<p class="short">${a[2]}</p>`)}${fold('展开详细原理解析',`<p>${a[3]}</p>${jump(0,'line'+a[5],'对照相关代码 →')}`)}${fold('展开教师连续追问及答案',a[4].map(f=>`<div class="follow"><strong>追问：${f[0]}</strong><p>${f[1]}</p></div>`).join(''))}</article>`;}).join('')||'<div class="empty-state">没有匹配的问题。试试“方式2”“LED”或清空搜索词。</div>';
+ $('#qaCount').textContent=`显示 ${count} / ${questions.length} 题 · 所有答案默认折叠`;
+}
+$('#qaSearch').oninput=renderQuestions;$('#qaCategory').onchange=renderQuestions;$('#collapseAnswers').onclick=()=>{$$('#questions details').forEach(d=>d.open=false);toast('答案已全部收起');};
+
+let sim,timer=null;
+function freshSim(){return {tl:0,th:0,tf:0,tr:true,p1:255,level:1,last:1,pending:false,autoCPU:true,history:[1],cycle:0,events:0,overflows:0};}
+function refreshPort(){sim.p1=(~sim.tl)&255;}
+function commitCount(){if(sim.tl===255){sim.tl=sim.th;sim.tf=1;sim.overflows++;}else sim.tl++;sim.events++;}
+function sampleCycle(){
+ // Commits at the next abstract cycle, before that cycle's input sample.
+ if(sim.pending){commitCount();sim.pending=false;}
+ const falling=sim.last===1&&sim.level===0;
+ if(falling&&sim.tr)sim.pending=true;
+ sim.last=sim.level;sim.history.push(sim.level);if(sim.history.length>25)sim.history.shift();sim.cycle++;
+ if(sim.autoCPU)refreshPort();return falling;
+}
+function cleanPulseInternal(){sim.level=1;sampleCycle();sim.level=0;sampleCycle();sampleCycle();sim.level=1;sampleCycle();}
+function updateSim(message){
+ $('#simStats').innerHTML=[['TL0',hex(sim.tl),'实际计数单元'],['TH0',hex(sim.th),'重装值 / 不自增'],['TF0',String(sim.tf),'溢出标志'],['P1',hex(sim.p1),'CPU最近输出']].map(a=>`<div class="sim-stat"><span>${a[0]}</span><strong>${a[1]}</strong><span>${a[2]}</span></div>`).join('');
+ $('#simLeds').innerHTML=ledHTML((~sim.p1)&255);
+ $('#toggleTR').textContent='TR0：'+(sim.tr?'运行中 / 1':'已停止 / 0');$('#toggleTR').classList.toggle('on',sim.tr);$('#toggleTR').setAttribute('aria-pressed',String(sim.tr));
+ $('#toggleCPU').textContent='CPU：'+(sim.autoCPU?'自动刷新显示':'暂停自动刷新');$('#toggleCPU').classList.toggle('on',sim.autoCPU);$('#toggleCPU').setAttribute('aria-pressed',String(sim.autoCPU));
+ $('#autoPulse').disabled=!!timer;$('#pausePulse').disabled=!timer;
+ const h=sim.history,step=560/24;let d=`M50 ${h[0]?38:84}`;h.forEach((v,i)=>{if(i)d+=`H${50+i*step}V${v?38:84}`;});d+=`H${50+h.length*step}`;$('#wavePath').setAttribute('d',d);
+ $('#simLog').innerHTML=`<strong>输入=${sim.level?'高':'低'} · 上次采样=${sim.last?'高':'低'} · 周期=${sim.cycle} · ${sim.pending?'已识别下降沿，待下一周期提交':'无待提交事件'}</strong><br>${message||'当前状态已更新。'}<br><span class="small">演示累计接受${sim.events}个事件、${sim.overflows}次溢出；这两个累计数由网页记录，并非原代码中的寄存器。</span>`;
+}
+function pauseTimer(){if(timer){clearInterval(timer);timer=null;}}
+function resetSim(){pauseTimer();sim=freshSim();updateSim('复位教学状态：TH0=TL0=0，TF0=0，TR0=1；首次CPU刷新P1=0xFF。输入与上次采样都从高电平开始。');}
+$('#setHigh').onclick=()=>{sim.level=1;updateSim('只把输入改为高电平，尚未推进采样。上升沿不直接计数。');};
+$('#setLow').onclick=()=>{sim.level=0;updateSim('只把输入改为低电平，尚未推进采样。请点击推进一个采样周期。');};
+$('#sample').onclick=()=>{const before=sim.events,fall=sampleCycle();updateSim(sim.events>before?'上周期识别的事件已提交到TL0；按当前CPU刷新设置更新P1。':fall&&sim.tr?'采到高→低，已识别事件；再推进一个周期可看到TL0更新。':fall?'采到高→低，但TR0=0，未接受计数。':'采样完成。没有新的被允许下降沿；保持低电平不会反复计数。');};
+$('#cleanPulse').onclick=()=>{const before=sim.events;cleanPulseInternal();updateSim(sim.events>before?'已送入高→低→低→高的预定采样序列，完成一次计数。':'脉冲已采样；TR0停止，故没有增加计数。');};
+$('#shortPulse').onclick=()=>{sim.level=1;sampleCycle();sim.level=0;sim.level=1;sampleCycle();updateSim('窄低脉冲完全落在两次采样之间：两个采样值都是高，因此本例漏采。其他相位的窄脉冲也可能被采到；不能说所有窄脉冲都必然被忽略。');};
+$('#bouncePulse').onclick=()=>{const before=sim.events;for(let i=0;i<3;i++)cleanPulseInternal();updateSim(`输入三个高低宽度都足够的下降沿，本次增加${sim.events-before}。这说明硬件计数器不会自动为机械触点消抖；示例不声称真实抖动固定三次。`);};
+$('#autoPulse').onclick=()=>{if(timer)return;timer=setInterval(()=>{cleanPulseInternal();updateSim('连续送入合格教学脉冲；屏幕节奏仅便于观察，与真实芯片频率无关。');},900);updateSim('连续输入已开始；可暂停，或独立停止TR0。');};
+$('#pausePulse').onclick=()=>{pauseTimer();updateSim('已暂停网页连续输入；硬件教学状态保留。');};
+$('#resetSim').onclick=resetSim;
+$('#toggleTR').onclick=()=>{if(sim.pending){updateSim('先推进一个采样周期，完成已经识别的事件后再改TR0；本模型不细分周期内控制写入的竞争。');return;}sim.tr=!sim.tr;updateSim(sim.tr?'TR0=1，恢复接受后续有效下降沿。计数值没有清零。':'TR0=0，暂停接受事件，TL0、TH0、TF0保持。');};
+$('#clearTF').onclick=()=>{sim.tf=0;updateSim('执行独立教学操作TF0=0，只清标志，不改TL0/TH0。原代码中没有这条清零语句。');};
+$('#toggleCPU').onclick=()=>{sim.autoCPU=!sim.autoCPU;if(sim.autoCPU)refreshPort();updateSim(sim.autoCPU?'CPU自动刷新恢复，P1更新到当前TL0的取反值。':'暂停自动刷新：T0仍能计数，但P1保持最近一次输出。');};
+$('#refreshCPU').onclick=()=>{refreshPort();updateSim('独立执行一次P1=~TL0，只更新端口；TL0没有被这条语句加1。');};
+$('#applyPreload').onclick=()=>{if(timer||sim.tr){updateSim('请先暂停连续输入，并点击TR0将其停止，再装载初值。');return;}const a=Number($('#preTL').value),b=Number($('#preTH').value);if(!Number.isInteger(a)||!Number.isInteger(b)||a<0||a>255||b<0||b>255||$('#preTL').value===''||$('#preTH').value===''){updateSim('TL0与TH0必须是0～255的整数。');return;}sim.tl=a;sim.th=b;sim.pending=false;if(sim.autoCPU)refreshPort();updateSim(`教学初值已装入：TL0=${hex(a)}，TH0=${hex(b)}。此操作没有自动清TF0；需要时请显式清标志。`);};
+const mobileLabels=['代码','电路','拆解','寄存器','问答'];
+let chapterLists=[],activeChapter=0,readingTimer;
+const guideStorageKey='pulse-counter-navigation-guide-v1';
+const navigationHelp=`<p><strong>底部换模块，顶部找章节。</strong></p><h4>两层导航</h4><p>电脑左侧01–05切换模块，点击「目录」打开杂志索引；手机使用底部五模块导航，顶部「目录」查找当前章节。当前模块同时使用红色、选中边线与文字标记。</p><h4>保留阅读位置</h4><p>再次点击当前模块保持位置。「本模块开头」是独立操作。跨模块知识链接会记录原位置，使用「返回阅读处」逐级返回，代码选择与独立滚动位置也会恢复。浏览器允许时会在本机记录阅读位置。</p><h4>手机阅读代码</h4><p>点击行号或语句只选中这一行，不跳走；代码区底部「查看解析」进入说明，「返回代码阅读处」恢复刚才的阅读。带虚线的词可单独打开语法解释。</p><h4>图纸与动画</h4><p>图纸内用缩放按钮、滑动或拖动查看细节。「全图」复位。目录里的「减少动画」立即生效并尽可能记住偏好；系统要求减少动效时自动尊重。</p><h4>资料与打印</h4><p>顶部「资料与核验」保留原始资料依据。目录提供「打印讲义」，打印时包含全部五个模块及展开后的答案。</p>`;
+
+function createChapterLists(){
+ const first=[
+  [{id:'codeReading',label:'源代码与逐行解析',selector:'.code-grid'}],
+  [{id:'circuitReading',label:'完整 SVG 电路图',selector:'.card'},{id:'circuitNotes',label:'关键引脚与图示说明',selector:'.note'}],
+  [{id:'hardwareReading',label:'元器件、关键引脚与连线',selector:'.part-chooser'}],
+  [{id:'registerArea',label:'核心寄存器与位配置'}],
+  [{id:'questionTools',label:'全部题目与搜索',selector:'.qa-tools'}]
+ ];
+ chapterLists=first.map((entries,m)=>{
+  const module=$('#module'+m);
+  entries.forEach(item=>{const el=item.selector?$(item.selector,module):$('#'+item.id);el.id=item.id;el.setAttribute('tabindex','-1');});
+  $$('.subheading',module).forEach((el,i)=>{el.id='chapter-'+m+'-'+i;el.setAttribute('tabindex','-1');entries.push({id:el.id,label:$('h3',el).textContent});});
+  return entries;
+ });
+ ['C51代码','寄存器与原理','硬件与Proteus','综合分析'].forEach(category=>chapterLists[4].push({id:'questions',label:category,category}));
+ $('#questions').setAttribute('tabindex','-1');
+}
+function syncNavigation(){
+ $$('.navbtn,.mobile-tab,.contents-module').forEach(el=>{
+  const on=Number(el.dataset.module)===currentModule;
+  el.classList.toggle('active',on);el.setAttribute('aria-current',on?'page':'false');
+  const marker=$('.tab-marker',el);if(marker)marker.textContent=on?'✓ 当前':String(Number(el.dataset.module)+1).padStart(2,'0');
+ });
+ $('#mobileTitle').innerHTML=`<span class="mobile-count">${String(currentModule+1).padStart(2,'0')}/05</span>${mobileLabels[currentModule]}`;
+ $('#backBtn').hidden=!navStack.length;$('#mobileBackBtn').hidden=!navStack.length;
+}
+function moduleTop(){return Math.max(0,$('#module'+currentModule).getBoundingClientRect().top+window.scrollY-readingOffset());}
+function scrollToReading(el){
+ const y=Math.max(0,el.getBoundingClientRect().top+window.scrollY-readingOffset());
+ window.scrollTo({top:y,behavior:'instant'});
+}
+function updateReadingLocation(){
+ const entries=chapterLists[currentModule];if(!entries)return;
+ let index=0;
+ if(currentModule===4){const cat=$('#qaCategory').value;index=Math.max(0,entries.findIndex(item=>item.category===cat));}
+ else{
+  entries.forEach((item,i)=>{if($('#'+item.id).getBoundingClientRect().top<=readingOffset()+24)index=i;});
+  if(window.scrollY+window.innerHeight>=document.documentElement.scrollHeight-3)index=entries.length-1;
+ }
+ activeChapter=index;
+ const label='正在阅读：'+entries[index].label;
+ $('#readingLocation').textContent=label;$('#readingLocation').title=label;
+ $$('#contentsList [data-chapter]').forEach(el=>{const on=Number(el.dataset.chapter)===index;el.setAttribute('aria-current',on?'location':'false');$('.chapter-state',el).textContent=on?'正在阅读':'前往 →';});
+}
+function openContents(){
+ if($('#modal').open)closeModal();contentsOpener=document.activeElement;updateReadingLocation();
+ $('#contentsModule').textContent='VOL.03 / '+String(currentModule+1).padStart(2,'0')+' · '+names[currentModule];
+ $('#contentsIndex').innerHTML=names.map((n,i)=>`<button class="contents-module" data-module="${i}" aria-current="${i===currentModule?'page':'false'}"><b>0${i+1}</b><span>${mobileLabels[i]}</span><span class="sr-only">${n}</span></button>`).join('');
+ const entries=chapterLists[currentModule];
+ $('#contentsCount').textContent=currentModule===4?'选择全部题目或按类别阅读':'本模块共 '+entries.length+' 个阅读位置，点击即可跳转';
+ $('#contentsList').innerHTML=entries.map((item,i)=>`<button class="chapter-link" data-chapter="${i}" aria-current="${i===activeChapter?'location':'false'}"><span class="chapter-order">${String(i+1).padStart(2,'0')}</span><span>${esc(item.label)}</span><span class="chapter-state">${i===activeChapter?'正在阅读':'前往 →'}</span></button>`).join('');
+ const sheet=$('#contentsDialog');if(!sheet.open){if(sheet.showModal)sheet.showModal();else sheet.setAttribute('open','');}
+ document.body.classList.add('contents-open');$('#contentsBtn').setAttribute('aria-expanded','true');$('#railContentsBtn').setAttribute('aria-expanded','true');$('#closeContentsBtn').focus({preventScroll:true});
+}
+function closeContents(){
+ const sheet=$('#contentsDialog');if(sheet.open){if(sheet.close)sheet.close();else sheet.removeAttribute('open');}
+ document.body.classList.remove('contents-open');$('#contentsBtn').setAttribute('aria-expanded','false');$('#railContentsBtn').setAttribute('aria-expanded','false');if(contentsOpener&&contentsOpener.isConnected)contentsOpener.focus({preventScroll:true});
+}
+function chooseChapter(index){
+ const item=chapterLists[currentModule][index];if(!item)return;closeContents();
+ if(currentModule===4){$('#qaSearch').value='';$('#qaCategory').value=item.category||'';renderQuestions();}
+ const el=$('#'+item.id);scrollToReading(el);try{el.focus({preventScroll:true});}catch(e){}
+ scrollPositions[currentModule]=window.scrollY;updateReadingLocation();
+}
+function goModuleTop(){closeContents();window.scrollTo({top:moduleTop(),behavior:'instant'});scrollPositions[currentModule]=window.scrollY;updateReadingLocation();}
+function dismissGuide(){
+ $('#mobileGuide').hidden=true;
+ try{localStorage.setItem(guideStorageKey,'seen');}catch(e){}
+ updateReadingLocation();
+}
+function initializeNavigation(){
+ $('#mobileNav').innerHTML=mobileLabels.map((label,i)=>`<button class="mobile-tab" data-module="${i}" aria-current="${i===currentModule?'page':'false'}"><span class="tab-marker" aria-hidden="true">${i===currentModule?'✓ 当前':String(i+1).padStart(2,'0')}</span><span>${label}</span></button>`).join('');
+ try{if(localStorage.getItem(guideStorageKey)==='seen')$('#mobileGuide').hidden=true;}catch(e){}
+ createChapterLists();syncNavigation();updateReadingLocation();
+ $('#contentsBtn').onclick=openContents;$('#railContentsBtn').onclick=openContents;$('#closeContentsBtn').onclick=closeContents;$('#railTopBtn').onclick=goModuleTop;
+ $('#contentsTopBtn').onclick=goModuleTop;
+ $('#dismissGuideBtn').onclick=dismissGuide;$('#tryContentsBtn').onclick=()=>{dismissGuide();openContents();};
+ $('#helpBtn').onclick=()=>{closeContents();showModal('如何阅读这份讲义',navigationHelp);};
+ $('#contentsDialog').addEventListener('click',e=>{if(e.target===$('#contentsDialog'))closeContents();});
+ $('#contentsDialog').addEventListener('close',()=>{document.body.classList.remove('contents-open');$('#contentsBtn').setAttribute('aria-expanded','false');$('#railContentsBtn').setAttribute('aria-expanded','false');if(contentsOpener&&contentsOpener.isConnected)contentsOpener.focus({preventScroll:true});});
+ window.addEventListener('scroll',()=>{clearTimeout(readingTimer);readingTimer=setTimeout(()=>{updateReadingLocation();persistReading();},100);},{passive:true});
+ $('#qaCategory').addEventListener('change',updateReadingLocation);
+}
+
+function readingOffset(){const bar=$('.mobile-bar');return (getComputedStyle(bar).display==='none'?0:bar.getBoundingClientRect().height)+16;}
+function saveView(){return {m:currentModule,y:window.scrollY,line:selectedLine,part:selectedPart,reg:selectedReg,bit:selectedBit,codeX:$('#codeLines').scrollLeft,codeY:$('#codeLines').scrollTop,diagram:[zoomState.diagram,$('#diagram').scrollLeft,$('#diagram').scrollTop],explorer:[zoomState.explorer,$('#explorer').scrollLeft,$('#explorer').scrollTop]};}
+function navigate(m,target='',record=true){
+ if(m<0||m>4)return;
+ const changed=currentModule!==m;closeContents();if(record)navStack.push(saveView());scrollPositions[currentModule]=window.scrollY;
+ if(currentModule!==m&&currentModule===3&&timer){pauseTimer();updateSim('离开原理模块，连续输入已自动暂停；状态保留。');}
+ currentModule=m;$$('.module').forEach((e,i)=>e.hidden=i!==m);syncNavigation();
+ if(m===0&&target.startsWith('line'))selectLine(Number(target.slice(4)),true);
+ if(m===2&&target)selectPart(target);
+ if(m===3&&registerDefs[target]){selectedReg=target;selectedBit=target==='TCON'?4:target==='P3'?4:target==='TMOD'?2:0;renderRegister();}
+ try{history.replaceState(null,'',`#m${m+1}${target?'/'+encodeURIComponent(target):''}`);}catch(e){}
+ if(m===1)fitDiagram('diagram');if(m===2)fitDiagram('explorer');
+ const el=m===3&&target==='principle'?$('#principle'):m===3&&registerDefs[target]?$('#registerArea'):null;
+ if(el)scrollToReading(el);
+ else window.scrollTo({top:target?moduleTop():(scrollPositions[m]??moduleTop()),behavior:'instant'});
+ updateReadingLocation();if(changed)playTransition(m);persistReading();
+}
+function returnToReading(){
+ const v=navStack.pop();if(!v)return;
+ selectedLine=v.line;selectLine(v.line);selectedPart=v.part;selectPart(v.part);selectedReg=v.reg;selectedBit=v.bit;renderRegister();
+ navigate(v.m,'',false);$('#codeLines').scrollLeft=v.codeX||0;$('#codeLines').scrollTop=v.codeY||0;
+ restoreDiagramViews(v);window.scrollTo({top:v.y,behavior:'instant'});scrollPositions[v.m]=window.scrollY;syncNavigation();updateReadingLocation();persistReading();
+}
+$('#backBtn').onclick=returnToReading;$('#mobileBackBtn').onclick=returnToReading;
+document.addEventListener('click',e=>{
+ const syntaxEl=e.target.closest('[data-syntax]');if(syntaxEl){showSyntax(syntaxEl.dataset.syntax);return;}
+ const line=e.target.closest('[data-line]');if(line){selectLine(Number(line.dataset.line));return;}
+ const link=e.target.closest('[data-jump]');if(link){const sep=link.dataset.jump.indexOf(':'),m=Number(link.dataset.jump.slice(0,sep)),t=link.dataset.jump.slice(sep+1);if($('#modal').open)closeModal();navigate(m,t);return;}
+ const chapter=e.target.closest('[data-chapter]');if(chapter){chooseChapter(Number(chapter.dataset.chapter));return;}
+ const nav=e.target.closest('[data-module]');if(nav){const m=Number(nav.dataset.module);if(m===currentModule)closeContents();else navigate(m,'',false);return;}
+ const z=e.target.closest('[data-zoom]');if(z){const [id,how]=z.dataset.zoom.split(':');zoom(id,how);return;}
+ const pc=e.target.closest('[data-part-select]');if(pc){selectPart(pc.dataset.partSelect,true);return;}
+ const part=e.target.closest('.schematic [data-part]');if(part){if(part.closest('#diagram'))selectDiagramPart(part.dataset.part);else selectPart(part.dataset.part,true);return;}
+ if(e.target.closest('#returnCode')){returnCodeView();return;}
+ const reg=e.target.closest('[data-reg]');if(reg){selectedReg=reg.dataset.reg;selectedBit=selectedReg==='TCON'?4:selectedReg==='P3'?4:selectedReg==='TMOD'?2:0;renderRegister();return;}
+ const bit=e.target.closest('[data-bit]');if(bit){selectedBit=Number(bit.dataset.bit);renderRegister();return;}
+ if(e.target.closest('#flipBit')){tmodDemo^=1<<selectedBit;renderRegister();return;}
+ if(e.target.closest('#restoreTMOD')){tmodDemo=6;selectedBit=2;renderRegister();}
+});
+document.addEventListener('keydown',e=>{if(e.target.matches('.schematic [data-part]')&&(e.key==='Enter'||e.key===' ')){e.preventDefault();e.target.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
+let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{if(currentModule===1)fitDiagram('diagram');if(currentModule===2)fitDiagram('explorer');updateReadingLocation();},100);});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&timer){pauseTimer();updateSim('页面转入后台，连续输入已暂停；状态保留。');}});
+const reconstructionReport=`<section aria-label="重构版交付说明"><span class="info-label">CONSTRUCTIVIST EDITION / 2026-10-24</span><h4>本次重构与验证</h4><p>采用A3-β构成主义编辑设计、N3编号导航脊与杂志目录、T3纸张配色、650ms的M3转场及F3减少动画控制。模块01采用指令档案，02工程图纸，03结构解剖，04数字构成，05考试档案。</p><p>17行C51源码（含空行）、24道原始问答、六个寄存器定义、真实电路拓扑与核心计数模型均保留。手机选行只选中，通过「查看解析」及「返回代码阅读处」控制阅读；再次点击当前模块保持位置，跨模块跳转可逐级返回。打印会临时展示全部24题，再恢复原筛选。</p><div class="note"><strong>已通过：301项DOM/状态回归检查。</strong><p>覆盖代码、语法、流程、SVG元件与路径比对、缩放计算、寄存器位义、溢出/重装、TR0停止、CPU显示冻结、输入采样、24题搜索折叠、阅读返回、动效取消与存储不可用等路径。另完成CSS语法解析、资源独立性检查及主要文字配色对比度计算。</p></div><p>五模块的无障碍DOM规则扫描未报告确定违规；部分ARIA规则在模拟DOM中仍需人工复核。这些结果不代表完整WCAG认证。</p><p class="status-uncertain"><strong>尚未完成真实浏览器视觉验收。</strong>当前环境缺少可运行的本地浏览器；云端浏览器的安全策略拒绝打开本地文件。因此320–1920px仅进行了DOM事件路径烟测，没有实测布局、横向溢出、触摸、浏览器缩放、原生焦点陷阱和动画观感；未生成或声称存在浏览器截图。Windows、iPhone/iPad Safari实体设备均未实测。执行过的检查未发现逻辑错误，实际渲染仍需复核。</p><p class="small">下面的资料依据和原版验收记录保留自所附HTML。本次未重新读取这些外部资料，原版记录不作为本次重构验收结论。</p></section>`;
+
+/* Experience layer. The counter, circuit data and teaching assets above are preserved. */
+let contentsOpener=null,codeReadingView=null,motionTimer=null,motionSerial=0;
+const motionQuery=matchMedia('(prefers-reduced-motion: reduce)');
+let userReduced=false;
+try{userReduced=localStorage.getItem('8051-constructivist-motion')==='reduce';}catch(e){}
+function syncMotion(){
+ const reduced=userReduced||motionQuery.matches;
+ document.body.classList.toggle('motion-reduced',reduced);
+ $('#motionToggle').checked=reduced;
+ $('#motionHelp').textContent=motionQuery.matches?'系统已要求减少动效；当前尊重系统设置。':reduced?'已减少转场；教学操作与数据不受影响。':'完整M3转场 · 650ms；可随时减少动画。';
+ if(reduced)cancelTransition();
+}
+function cancelTransition(){
+ clearTimeout(motionTimer);const stage=$('#motionStage');
+ stage.getAnimations({subtree:true}).forEach(a=>a.cancel());stage.classList.remove('play');stage.hidden=true;
+ motionSerial++;
+}
+function playTransition(m){
+ cancelTransition();if(userReduced||motionQuery.matches)return;
+ const stage=$('#motionStage'),serial=motionSerial;
+ $('#motionNumber').textContent='0'+(m+1);$('#motionCaption').textContent=english[m];
+ stage.hidden=false;void stage.offsetWidth;stage.classList.add('play');
+ motionTimer=setTimeout(()=>{if(serial===motionSerial){stage.classList.remove('play');stage.hidden=true;}},680);
+}
+function selectDiagramPart(id){
+ const a=getPart(id);
+ $$('#diagram [data-part]').forEach(el=>{const on=el.dataset.part===id;el.classList.toggle('picked',on);el.setAttribute('aria-pressed',String(on));});
+ $('#diagramSelection').textContent='选中 / '+id+' · '+a[0];
+ $('#diagramAnalyze').dataset.jump='2:'+id;
+}
+function viewAnalysis(){
+ codeReadingView={y:window.scrollY,x:$('#codeLines').scrollLeft,cy:$('#codeLines').scrollTop};
+ scrollToReading($('#lineExplain'));$('#returnCode').focus({preventScroll:true});
+}
+function returnCodeView(){
+ if(codeReadingView){$('#codeLines').scrollLeft=codeReadingView.x;$('#codeLines').scrollTop=codeReadingView.cy;window.scrollTo({top:codeReadingView.y,behavior:'instant'});}
+ else scrollToReading($('#codeReading'));
+ $('.line-select',$(`.code-line[data-line="${selectedLine}"]`)).focus({preventScroll:true});
+}
+function restoreDiagramViews(v){
+ for(const id of ['diagram','explorer']){if(!v[id])continue;zoomState[id]=v[id][0];fitDiagram(id);$('#'+id).scrollLeft=v[id][1];$('#'+id).scrollTop=v[id][2];}
+}
+const readingStorageKey='8051-constructivist-reading-v5';
+let readingReady=false;
+function persistReading(){
+ if(!readingReady)return;
+ scrollPositions[currentModule]=window.scrollY;
+ try{localStorage.setItem(readingStorageKey,JSON.stringify({...saveView(),positions:scrollPositions}));}catch(e){}
+}
+function restoreReading(expectedModule=null){
+ let v;try{v=JSON.parse(localStorage.getItem(readingStorageKey));}catch(e){}
+ if(!v||!Number.isInteger(v.m)||v.m<0||v.m>4||(expectedModule!==null&&v.m!==expectedModule))return false;
+ if(Array.isArray(v.positions))v.positions.slice(0,5).forEach((n,i)=>scrollPositions[i]=Number.isFinite(n)?n:null);
+ if(Number.isInteger(v.line)&&v.line>=1&&v.line<=17)selectLine(v.line);
+ if(typeof v.part==='string')selectPart(v.part);
+ if(registerDefs[v.reg]){selectedReg=v.reg;selectedBit=Number.isInteger(v.bit)&&v.bit>=0&&v.bit<=7?v.bit:0;renderRegister();}
+ navigate(v.m,'',false);restoreDiagramViews(v);
+ $('#codeLines').scrollLeft=Number(v.codeX)||0;$('#codeLines').scrollTop=Number(v.codeY)||0;
+ window.scrollTo({top:Number(v.y)||0,behavior:'instant'});updateReadingLocation();cancelTransition();return true;
+}
+function initializeExperience(){
+ syncMotion();
+ $('#motionToggle').onchange=()=>{userReduced=$('#motionToggle').checked;try{localStorage.setItem('8051-constructivist-motion',userReduced?'reduce':'full');}catch(e){}syncMotion();};
+ if(motionQuery.addEventListener)motionQuery.addEventListener('change',syncMotion);else if(motionQuery.addListener)motionQuery.addListener(syncMotion);
+ $('#viewAnalysis').onclick=viewAnalysis;
+ $('#viewPartExplain').onclick=()=>{scrollToReading($('#partExplain'));$('#partExplain').setAttribute('tabindex','-1');$('#partExplain').focus({preventScroll:true});};
+ $('#contentsDialog').addEventListener('cancel',e=>{e.preventDefault();closeContents();});
+ $('#printBtn').onclick=()=>{closeContents();window.print();};
+ // Print open answers and deeper explanations, then restore the reading state.
+ let printDetails=[],printQA=null;
+ window.addEventListener('beforeprint',()=>{
+  printDetails=$$('details').filter(el=>!el.closest('#questions')).map(el=>[el,el.open]);
+  printQA={search:$('#qaSearch').value,category:$('#qaCategory').value,open:$$('.question').map(q=>[$('.qnum',q).textContent,$$('details',q).map(x=>x.open)])};
+  $('#qaSearch').value='';$('#qaCategory').value='';renderQuestions();$$('details').forEach(el=>el.open=true);
+ });
+ window.addEventListener('afterprint',()=>{
+  printDetails.forEach(([el,open])=>{if(el.isConnected)el.open=open;});
+  if(printQA){$('#qaSearch').value=printQA.search;$('#qaCategory').value=printQA.category;renderQuestions();$$('.question').forEach(q=>{const prior=printQA.open.find(x=>x[0]===$('.qnum',q).textContent);if(prior)$$('details',q).forEach((el,i)=>el.open=prior[1][i]);});printQA=null;}
+ });
+ $('#codeLines').addEventListener('scroll',persistReading,{passive:true});
+ window.addEventListener('pagehide',persistReading);
+ // Mouse drag-to-pan only; touch retains the browser's native scrolling and zoom.
+ for(const box of $$('.circuit-viewport')){
+  let drag=null,suppressClick=false;
+  box.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'||e.button!==0)return;drag={x:e.clientX,y:e.clientY,sx:box.scrollLeft,sy:box.scrollTop,moved:false};});
+  box.addEventListener('pointermove',e=>{if(!drag||!e.buttons)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>6)drag.moved=true;if(drag.moved){e.preventDefault();box.scrollLeft=drag.sx-dx;box.scrollTop=drag.sy-dy;}});
+  box.addEventListener('pointerup',()=>{suppressClick=!!drag?.moved;drag=null;});
+  box.addEventListener('pointerleave',()=>drag=null);
+  box.addEventListener('click',e=>{if(suppressClick){e.preventDefault();e.stopPropagation();suppressClick=false;}},true);
+ }
+ readingReady=true;
+}
+
+selectLine(5);renderFlow();renderEquiv();selectPart('U1');renderRegister();renderSnapshot();renderQuestions();calculateClock();resetSim();
+initializeNavigation();initializeExperience();
+const initialHash=/^#m([1-5])(?:\/(.*))?$/.exec(location.hash);if(initialHash){const m=Number(initialHash[1])-1,t=decodeURIComponent(initialHash[2]||'');if(t||!restoreReading(m))navigate(m,t,false);}else restoreReading();
+// An immutable snapshot interface supports local content/state audits without affecting the UI.
+window.LabAudit=Object.freeze({get source(){return originalCode;},get circuit(){return JSON.parse(JSON.stringify(circuitModel));},get snapshot(){return JSON.parse(JSON.stringify(sim));},questionCount:questions.length});
+
+</script>
+</body></html>
