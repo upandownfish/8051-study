@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#111315">
+<meta name="description" content="传统吉祥图案中的谐音表达 · 22页离线课堂演讲提词器">
+<title>吉祥图案 · 课堂演讲提词器</title>
+<style>
+:root{color-scheme:dark;--bg:#111315;--panel:#181b1e;--raised:#222629;--text:#f4f3ed;--muted:#b1b5b7;--line:#343a3d;--gold:#e5c27b;--gold-ink:#211b10;--hint:#d7bf91;--hint-bg:#211e18;--danger:#ff9b94;--shadow:0 24px 90px #0009;--font-size:40px;--footer-height:102px}
+:root[data-theme="light"]{color-scheme:light;--bg:#f6f4ee;--panel:#eeece5;--raised:#e4e1d9;--text:#242621;--muted:#626660;--line:#cccac1;--gold:#825c1f;--gold-ink:#fffaf0;--hint:#775a27;--hint-bg:#ece5d6;--danger:#ad3028;--shadow:0 24px 90px #24201830}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{background:var(--bg);color:var(--text);font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;overscroll-behavior:none}button,input{font:inherit}button{border:1px solid var(--line);border-radius:10px;min-height:44px;padding:9px 14px;background:var(--raised);color:var(--text);cursor:pointer;touch-action:manipulation;transition:background .15s,border-color .15s}button:hover:not(:disabled){border-color:var(--gold)}button:active:not(:disabled){transform:translateY(1px)}button:disabled{opacity:.32;cursor:default}button:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:4px}button svg{width:19px;height:19px;flex:none;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}button.primary{background:var(--gold);color:var(--gold-ink);border-color:var(--gold);font-weight:650}button.quiet{background:transparent}button.icon{padding:9px;width:44px;display:inline-flex;align-items:center;justify-content:center}[hidden]{display:none!important}.app{height:100vh;height:100dvh;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+.header{flex:none;background:var(--panel)}.header-inner{display:flex;align-items:center;gap:24px;padding:18px 32px 17px;max-width:1680px;margin:auto;min-width:0}.page-switch{display:flex;align-items:center;gap:12px;padding:8px 13px;background:transparent;min-width:120px;height:53px}.page-numbers{font-size:22px;font-variant-numeric:tabular-nums;white-space:nowrap}.page-numbers strong{font-weight:600;color:var(--gold)}.page-numbers span{font-size:15px;color:var(--muted)}.page-switch svg{width:14px}.heading{min-width:0;flex:1}.eyebrow{font-size:11px;letter-spacing:.2em;color:var(--muted);margin:0 0 5px}.heading h1{font-size:clamp(20px,2.15vw,29px);line-height:1.35;letter-spacing:.025em;font-weight:580;margin:0;overflow-wrap:anywhere}.page-timing{text-align:right;flex:none;font-size:12px;line-height:1.65;color:var(--muted);font-variant-numeric:tabular-nums}.page-timing strong{color:var(--text);font-weight:500;font-size:16px;margin-left:8px}.progress{height:3px;background:var(--line);overflow:hidden}.progress span{height:100%;display:block;background:var(--gold);transition:width .2s ease}.resume{flex:none;background:var(--hint-bg);color:var(--hint);display:flex;gap:12px;align-items:center;justify-content:center;padding:7px 18px;font-size:13px}.resume button{min-height:32px;font-size:13px;padding:4px 10px}.resume button:last-child{border:0}
+.reader{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;scrollbar-color:var(--line) transparent;scrollbar-width:thin;-webkit-overflow-scrolling:touch;touch-action:pan-y pinch-zoom;position:relative}.reading-inner{max-width:1160px;margin:auto;padding:27px 32px 45px}.cue{margin-bottom:26px;color:var(--hint);background:var(--hint-bg);border:1px solid color-mix(in srgb,var(--hint) 22%,transparent);border-radius:8px;font-size:15px;line-height:1.65}.cue summary{padding:12px 16px;cursor:pointer;user-select:none;font-size:13px;letter-spacing:.035em}.cue summary::marker{font-size:11px}.cue .cue-text{padding:0 16px 13px;white-space:pre-wrap;overflow-wrap:anywhere}.speech{font-size:var(--font-size);line-height:1.75;font-weight:400;letter-spacing:.025em;overflow-wrap:anywhere;word-break:normal}.speech p{margin:0 0 .9em}.speech p:last-child{margin-bottom:0}.speech .phase-label{display:block;font-size:12px;color:var(--muted);letter-spacing:.12em;font-weight:400;line-height:1.5;margin:24px 0 13px}.inline-cue{border:1px solid var(--gold);color:var(--gold);border-radius:9px;background:var(--hint-bg);padding:20px 24px;margin:26px 0;font-size:22px;line-height:1.6;letter-spacing:.015em}.inline-cue small{display:block;font-size:12px;color:var(--hint);margin-bottom:7px;letter-spacing:.1em}.inline-cue p{margin:0;white-space:pre-wrap}.read-end{display:flex;align-items:center;gap:14px;color:var(--muted);font-size:12px;letter-spacing:.08em;margin-top:30px;user-select:none}.read-end:before,.read-end:after{content:"";height:1px;background:var(--line);flex:1}.enter{animation:page-in .2s ease-out}@keyframes page-in{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}.reader:focus{outline:0}.reader:focus-visible{box-shadow:inset 0 0 0 2px var(--gold)}
+.footer{flex:none;background:var(--panel);border-top:1px solid var(--line);padding:14px 26px calc(12px + env(safe-area-inset-bottom));position:relative;z-index:3}.toolbar{max-width:1640px;margin:auto;display:flex;gap:22px;align-items:center;justify-content:space-between}.navigation{display:flex;align-items:center;gap:9px}.navigation button{height:49px;min-width:110px;display:flex;align-items:center;justify-content:center;gap:12px}.navigation #next{min-width:135px}.utilities{display:flex;align-items:center;gap:8px}.font-controls{display:flex;align-items:center;gap:2px;border:1px solid var(--line);border-radius:10px;padding:1px}.font-controls button{font-size:18px;background:transparent;border:0;min-width:39px;padding:6px;min-height:40px}.font-value{font-size:12px;font-variant-numeric:tabular-nums;min-width:36px;text-align:center;color:var(--muted)}.timer{display:flex;gap:12px;align-items:center}.timer-stats{min-width:142px}.timer-line{display:flex;align-items:baseline;gap:8px}.timer-clock{font-variant-numeric:tabular-nums;font-size:25px;font-weight:500;letter-spacing:.025em;line-height:1.1}.timer-cap{font-size:11px;color:var(--muted);white-space:nowrap}.timer-track{height:3px;background:var(--line);margin:6px 0 4px;border-radius:2px;overflow:hidden}.timer-track span{display:block;height:100%;background:var(--gold);width:0}.timer-state{font-size:10px;color:var(--muted);line-height:1.3;white-space:nowrap}.timer button{font-size:13px;min-width:54px;min-height:42px;padding:8px 11px}.timer #reset{min-width:38px;width:38px;padding:7px;background:transparent}.timer.warning .timer-clock,.timer.warning .timer-state{color:var(--gold)}.timer.over .timer-clock,.timer.over .timer-state{color:var(--danger)}.timer.over .timer-track span{background:var(--danger)}.footer-help{font-size:10px;letter-spacing:.035em;color:var(--muted);opacity:.75;margin-top:9px;text-align:center}.footer-help kbd{font:inherit} .focus-mode .eyebrow,.focus-mode .footer-help{display:none}.focus-mode .header-inner{padding-top:12px;padding-bottom:12px}
+.overlay{position:fixed;inset:0;z-index:20;background:#0009;display:flex;align-items:center;justify-content:center;padding:24px;padding-top:max(24px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom));backdrop-filter:blur(7px)}.modal{background:var(--panel);border:1px solid var(--line);width:min(760px,100%);max-height:100%;max-height:min(800px,calc(100dvh - 48px));border-radius:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;min-height:0}.modal-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 24px 15px;border-bottom:1px solid var(--line);flex:none}.modal-head h2{font-size:20px;font-weight:550;margin:0}.modal-head p{margin:6px 0 0;font-size:12px;color:var(--muted)}.modal-body{padding:18px 24px 24px;overflow:auto;overscroll-behavior:contain;min-height:0}.page-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}.page-option{display:flex;gap:13px;align-items:center;text-align:left;min-height:70px;background:transparent;padding:12px}.page-option.current{background:var(--hint-bg);border-color:var(--gold)}.option-number{color:var(--gold);font-size:19px;font-variant-numeric:tabular-nums;min-width:25px}.option-title{font-size:14px;line-height:1.4}.option-meta{display:block;color:var(--muted);font-size:11px;margin-top:4px}.settings{width:min(540px,100%)}.setting-row{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);font-size:15px}.setting-row small{display:block;font-size:12px;color:var(--muted);line-height:1.6;margin-top:5px}.setting-row button{font-size:13px;flex:none}.help{font-size:13px;color:var(--muted);line-height:1.9;margin-top:24px}.help p{margin:9px 0}.help strong{color:var(--text);font-weight:500}.toast{position:fixed;left:50%;top:max(116px,calc(env(safe-area-inset-top) + 100px));transform:translateX(-50%);max-width:calc(100% - 36px);padding:12px 18px;background:var(--raised);border:1px solid var(--line);box-shadow:var(--shadow);color:var(--text);border-radius:10px;font-size:14px;line-height:1.6;z-index:30;pointer-events:none}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}noscript{position:fixed;inset:0;z-index:100;background:#111;color:white;padding:40px;font-size:22px;line-height:1.8}
+@media(min-width:1650px){.reading-inner{max-width:1260px;padding-top:35px}.header-inner{padding-top:22px;padding-bottom:21px}.footer{padding-top:18px}}
+@media(max-width:1120px){.header-inner{gap:18px;padding:16px 22px}.reading-inner{padding:24px 28px 40px}.toolbar{gap:14px}.navigation button{min-width:88px;gap:7px;font-size:14px}.navigation #next{min-width:100px}.utilities{gap:6px}.timer{gap:7px}.timer-stats{min-width:128px}.timer-clock{font-size:23px}.footer{padding-left:18px;padding-right:18px}.font-value{min-width:32px}.utilities #fullscreen{width:42px}.font-controls button{min-width:33px}}
+@media(max-width:820px){.toolbar{display:grid;grid-template-columns:1fr auto;gap:10px 14px}.navigation{grid-column:1;grid-row:1}.utilities{grid-column:2;grid-row:1;justify-content:flex-end}.timer{grid-column:1/-1;grid-row:2;justify-content:flex-end;padding-top:9px;border-top:1px solid var(--line);gap:8px}.timer-stats{display:flex;align-items:center;flex:1;gap:12px}.timer-track{width:min(26vw,180px);flex:1;margin:0}.timer-state{font-size:10px;min-width:72px}.timer-line{flex:none}.timer button{min-height:34px;padding-top:5px;padding-bottom:5px}.timer #reset{min-height:34px;height:34px}.footer-help{display:none}.header-inner{gap:14px;padding:13px 20px}.page-switch{min-width:99px;height:48px;gap:7px;padding:7px 10px}.page-numbers{font-size:20px}.eyebrow{font-size:10px}.page-timing strong{font-size:14px}.footer{padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom))}.navigation button{height:44px}.cue{margin-bottom:20px}}
+@media(max-width:540px){:root{--font-size:28px}.header-inner{padding:11px 14px;gap:11px;flex-wrap:wrap}.page-switch{width:94px;min-width:94px;height:47px}.heading h1{font-size:18px;line-height:1.35;font-weight:550}.eyebrow{font-size:9px;letter-spacing:.12em;margin-bottom:4px}.heading{flex-basis:calc(100% - 105px)}.page-timing{width:100%;display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:0 1px;line-height:1.4}.page-timing strong{font-size:12px;margin-left:6px}.reading-inner{padding:18px 19px 28px}.speech{line-height:1.72;letter-spacing:.015em}.speech p{margin-bottom:.85em}.cue{font-size:13px;margin-bottom:20px}.cue summary{font-size:12px;padding:10px 12px}.cue .cue-text{padding:0 12px 11px}.inline-cue{font-size:19px;padding:16px;margin:20px 0}.inline-cue small{font-size:10px}.speech .phase-label{font-size:11px}.footer{padding-left:10px;padding-right:10px}.toolbar{gap:8px}.navigation{gap:6px}.navigation button{min-width:72px;font-size:13px;padding:8px 9px;gap:5px}.navigation button svg{width:14px;height:14px}.navigation #next{min-width:82px}.utilities{gap:4px}.font-controls{gap:0;border-radius:9px}.font-controls button{font-size:16px;min-width:29px;padding:4px;min-height:40px}.font-value{min-width:27px;font-size:10px}.utilities button.icon{width:38px;min-height:44px;padding:7px}.utilities button svg{width:17px}.timer-stats{gap:8px;min-width:0}.timer-clock{font-size:22px}.timer-line{gap:5px}.timer-cap{font-size:10px}.timer-state{display:none}.timer{gap:5px}.timer-track{width:40px}.timer button{font-size:12px;min-width:51px;padding-left:9px;padding-right:9px}.timer #reset{width:34px;min-width:34px}.overlay{padding:12px;padding-top:max(12px,env(safe-area-inset-top));padding-bottom:max(12px,env(safe-area-inset-bottom))}.modal{max-height:calc(100dvh - 24px);border-radius:13px}.modal-head{padding:15px 16px 12px}.modal-body{padding:13px 14px 18px}.modal-head h2{font-size:18px}.page-list{grid-template-columns:1fr;gap:6px}.page-option{min-height:60px;padding:10px 12px}.option-title{font-size:14px}.resume{gap:6px;font-size:12px;padding:6px 10px}.resume button{font-size:12px;white-space:nowrap}.setting-row{font-size:14px}.toast{font-size:13px;top:132px}}
+@media(max-width:370px){.navigation button{min-width:62px;padding:8px 6px}.navigation #next{min-width:71px}.navigation button svg{display:none}.font-controls button{min-width:27px}.utilities button.icon{width:32px}.utilities #fullscreen{width:32px}.toolbar{gap:4px}.font-value{min-width:25px}}
+@media(max-height:500px) and (orientation:landscape){.header-inner{padding:7px 16px;gap:12px;flex-wrap:nowrap}.page-timing{width:auto;display:block;font-size:10px}.heading{flex-basis:auto}.eyebrow{display:none}.heading h1{font-size:18px}.page-switch{height:40px}.reading-inner{padding-top:12px}.footer{padding-top:7px;padding-bottom:calc(7px + env(safe-area-inset-bottom))}.toolbar{display:flex;gap:12px}.navigation button{height:40px;min-height:40px;min-width:70px}.navigation #next{min-width:78px}.timer{padding:0;border:0}.timer-stats{display:block;min-width:100px}.timer-track{width:auto;margin-top:5px}.timer-state{display:none}.timer-cap{font-size:10px}.timer-clock{font-size:20px}.timer button{min-width:40px}.cue{margin-bottom:16px}.cue summary{padding:7px 12px}.footer-help{display:none}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden"><symbol id="i-left" viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></symbol><symbol id="i-right" viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></symbol><symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol><symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></symbol><symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="8" cy="6" r="2" fill="var(--raised)"/><circle cx="16" cy="12" r="2" fill="var(--raised)"/><circle cx="10" cy="18" r="2" fill="var(--raised)"/></symbol><symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 9a8 8 0 1 1 1 9M4 4v5h5"/></symbol><symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol></svg>
+<div class="app" id="app">
+<header class="header">
+ <div class="header-inner">
+  <button class="page-switch" id="pagePicker" aria-label="选择PPT页码" aria-haspopup="dialog" title="选择页面（共22页）"><span class="page-numbers"><strong id="pageNumber">01</strong> <span>/ 22</span></span><svg><use href="#i-down"/></svg></button>
+  <div class="heading"><p class="eyebrow">课堂演讲 · 个人提词器</p><h1 id="pageTitle"></h1></div>
+  <div class="page-timing"><div>本页建议<strong id="pageDuration"></strong></div><div id="pageRange"></div></div>
+ </div>
+ <div class="progress" role="progressbar" aria-label="演讲页数进度" aria-valuemin="1" aria-valuemax="22" aria-valuenow="1" id="pageProgress"><span id="pageProgressFill"></span></div>
+</header>
+<div class="resume" id="resume" hidden><span id="resumeText"></span><button id="restorePage">继续阅读</button><button class="quiet" id="dismissResume">从头开始</button></div>
+<main class="reader" id="reader" tabindex="0" aria-label="当前PPT演讲稿，可上下滚动">
+ <article class="reading-inner" id="readingInner" aria-labelledby="pageTitle">
+  <details class="cue" id="cueDetails" open><summary>操作提示 · 无需朗读</summary><div class="cue-text" id="cueText"></div></details>
+  <div class="speech" id="speech"></div>
+  <div class="read-end" id="readEnd"></div>
+ </article>
+</main>
+<footer class="footer">
+ <div class="toolbar">
+  <nav class="navigation" aria-label="PPT翻页"><button id="prev" aria-keyshortcuts="ArrowLeft PageUp"><svg><use href="#i-left"/></svg>上一页</button><button class="primary" id="next" aria-keyshortcuts="ArrowRight PageDown Space">下一页<svg><use href="#i-right"/></svg></button></nav>
+  <div class="utilities" aria-label="阅读工具"><div class="font-controls"><button id="fontDown" aria-label="减小正文字号" title="减小字号">A−</button><output class="font-value" id="fontValue" aria-label="当前字号"></output><button id="fontUp" aria-label="增大正文字号" title="增大字号">A+</button></div><button class="icon quiet" id="fullscreen" aria-label="进入全屏" aria-pressed="false" title="全屏阅读"><svg><use href="#i-expand"/></svg></button><button class="icon quiet" id="settingsButton" aria-label="阅读设置与操作说明" aria-haspopup="dialog" title="设置与操作说明"><svg><use href="#i-settings"/></svg></button></div>
+  <section class="timer" id="timer" aria-label="演讲总计时"><div class="timer-stats"><div class="timer-line"><output class="timer-clock" id="timerClock" aria-label="总耗时">00:00</output><span class="timer-cap">/ 25:00</span></div><div class="timer-track" id="timeProgress" role="progressbar" aria-label="已用演讲时间" aria-valuemin="0" aria-valuemax="1500" aria-valuenow="0"><span id="timeProgressFill"></span></div><div class="timer-state" id="timerState">未开始 · 计划 23:00</div></div><button id="timerToggle">开始</button><button class="icon" id="reset" aria-label="重置演讲计时" title="重置计时"><svg><use href="#i-reset"/></svg></button></section>
+ </div>
+ <div class="footer-help">← → / 空格翻页　·　上下滚动阅读　·　点击页码跳转　·　计时由你手动开始</div>
+</footer>
+</div>
+<div class="overlay" id="pagesOverlay" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="pagesHeading" tabindex="-1"><div class="modal-head"><div><h2 id="pagesHeading">选择 PPT 页面</h2><p>22 页 · 原稿规划 23:00，含 45 秒视频</p></div><button class="icon quiet" data-close aria-label="关闭页面选择"><svg><use href="#i-close"/></svg></button></div><div class="modal-body"><div class="page-list" id="pageList"></div></div></section></div>
+<div class="overlay" id="settingsOverlay" hidden><section class="modal settings" role="dialog" aria-modal="true" aria-labelledby="settingsHeading" tabindex="-1"><div class="modal-head"><div><h2 id="settingsHeading">阅读设置</h2><p>设置自动保存在当前浏览器中</p></div><button class="icon quiet" data-close aria-label="关闭阅读设置"><svg><use href="#i-close"/></svg></button></div><div class="modal-body">
+ <div class="setting-row"><div>操作提示<small>与正文分开；第 5 页的视频标记始终保留</small></div><button id="tipsToggle" aria-pressed="true">已显示</button></div>
+ <div class="setting-row"><div>阅读配色<small>深色背景或浅色纸面</small></div><button id="themeToggle">切为浅色</button></div>
+ <div class="setting-row"><div>从头练习<small>回到第 1 页，保留当前计时</small></div><button id="firstPage">回到首页</button></div>
+ <div class="help"><p><strong>翻页：</strong>← / PageUp 上一页；→ / 空格 / PageDown 下一页。手机左右滑动翻页，上下滑动阅读。点击顶部页码，可直接选择任意一页。</p><p><strong>计时：</strong>手动开始、暂停、继续或重置。23:00 起显示临近上限提醒，25:00 起显示超时；视频播放期间总计时继续。不会自动翻页。</p><p><strong>全屏：</strong>电脑支持全屏与 Esc 退出；不支持网页全屏的浏览器使用专注阅读模式，再次点击全屏按钮可退出。</p><p><strong>内容：</strong>与上传 Word 的 22 页逐页对应，正文保留原文。操作提示和第 5 页的播放标记无需朗读。字号与阅读页码会在浏览器允许时保存；计时每次打开重新开始。</p></div>
+ </div></section></div>
+<div class="toast" id="toast" role="status" hidden></div><div class="sr-only" id="pageAnnounce" role="status" aria-live="polite"></div>
+<noscript>此提词器需要启用浏览器 JavaScript。启用后重新打开本文件，即可离线阅读全部 22 页演讲稿。</noscript>
+<script id="speechData" type="application/json">[
+  {
+    "number": 1,
+    "title": "图中有话 音中藏福",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "老师、同学们，大家好！我们是第九组。今天汇报的主题是《传统吉祥图案中的谐音表达》。"
+      },
+      {
+        "type": "speech",
+        "text": "平时看到鱼，我们可能想到一道菜；看到莲花，我们可能想到一处风景。但当鱼和莲花出现在同一幅传统图案里，它们就能共同说出一句祝福：连年有余。今天，我们就从这样的图案出发，看看古人怎样借助汉语的声音，把愿望藏进画面。"
+      }
+    ],
+    "sourceHeading": 6,
+    "duration": "00:45",
+    "start": "00:00",
+    "end": "00:45",
+    "cue": "面向同学开场，标题读清楚，稍作停顿。"
+  },
+  {
+    "number": 2,
+    "title": "小组分工",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "这是我们小组的分工。组长是杨梓恒，由我薛立韬进行汇报，袁海博和王文灿负责PPT制作。接下来，请大家先看一幅熟悉的年画。"
+      }
+    ],
+    "sourceHeading": 11,
+    "duration": "00:20",
+    "start": "00:45",
+    "end": "01:05",
+    "cue": "分工页简短带过。"
+  },
+  {
+    "number": 3,
+    "title": "一幅画 如何说出一句吉祥话",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "画面里最值得注意的，是莲花和鱼。它们当然可以组成一幅生动的自然景象，但放进传统年画里，还会产生另一层意思。"
+      },
+      {
+        "type": "speech",
+        "text": "莲花的‘莲’，与连续的‘连’同音；鱼的‘鱼’，与富余的‘余’同音。观众认出物象，再把名称转换成相同读音的字，就能够读出‘连年有余’。一幅没有完整写出祝福语的画，也就有了可以被理解的语言。"
+      },
+      {
+        "type": "speech",
+        "text": "这里的‘余’，寄托着对生活富足、衣食安定的期待；‘连’又把这份期待延伸到年复一年。图案既让人欣赏，也传递了对未来生活的愿望。理解了这个例子，我们就掌握了阅读许多吉祥图案的基本思路。"
+      }
+    ],
+    "sourceHeading": 15,
+    "duration": "01:10",
+    "start": "01:05",
+    "end": "02:15",
+    "cue": "依次指向年画中的莲花、鱼，以及右侧的连和余。"
+  },
+  {
+    "number": 4,
+    "title": "四步读懂传统吉祥纹样",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "我们把这个过程整理成四步。第一步是‘识形’，先看清画面中有什么，是动物、植物，还是某种器物。物象认错了，后面的解释也容易出错。"
+      },
+      {
+        "type": "speech",
+        "text": "第二步是‘借音’，寻找物象名称与吉祥词语之间相同或相近的读音，例如莲与连、鱼与余。第三步是‘读意’，把这些线索放在一起，理解整幅图案希望表达的祝愿。"
+      },
+      {
+        "type": "speech",
+        "text": "第四步是‘见俗’，也就是进一步追问：它出现在哪里，和什么生活习俗、礼仪场景有关？同样是吉祥纹样，装饰在婚庆用瓷上，或者出现在民间年画中，所处的环境就不同。四步结合起来，才能从认出一个图案，走到理解它为什么这样表达。"
+      }
+    ],
+    "sourceHeading": 21,
+    "duration": "01:10",
+    "start": "02:15",
+    "end": "03:25",
+    "cue": "按照识形、借音、读意、见俗的顺序讲述。"
+  },
+  {
+    "number": 5,
+    "title": "听见吉祥 当图案遇见汉语",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "接下来，我们先看一段大约四十五秒的视频，感受年画与民间吉祥图案中，语言和图像是怎样联系起来的。观看时，可以留意画面里的物象，以及它们让人联想到的祝福。"
+      },
+      {
+        "type": "cue",
+        "text": "【播放视频，45秒；播放期间不朗读。】"
+      },
+      {
+        "type": "speech",
+        "text": "接下来，我们用‘形、音、意’三个概念，把这种表达方式梳理清楚。"
+      }
+    ],
+    "sourceHeading": 27,
+    "duration": "01:20",
+    "start": "03:25",
+    "end": "04:45",
+    "cue": "读完引导语后播放视频45秒。视频结束，再读最后一句。"
+  },
+  {
+    "number": 6,
+    "title": "形 音 意 吉祥图案的三重密码",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "所谓‘形’，就是眼睛看得到的物象，例如鱼、花、鸟与器物。‘音’，是物象名称与吉祥词语之间的语音联系。‘意’，则是通过这些联系，最终表达出来的愿望。以鱼为例，画面呈现鱼的形象，名称让人联想到‘余’，最后传达生活富足的祝愿。"
+      },
+      {
+        "type": "speech",
+        "text": "不过，阅读吉祥图案时，还需要区分谐音和象征。鱼与余的联系，主要依靠读音；喜鹊与喜庆的关系，则主要来自传统文化中喜鹊报喜的象征含义。我们不能把所有吉祥寓意，都解释成两个字同音。"
+      },
+      {
+        "type": "speech",
+        "text": "实际作品经常把几种方式结合起来：有的地方借声音，有的地方靠文化联想，还可能利用物象的位置关系。下面的五件作品，就能让我们看到这些不同的组合。"
+      }
+    ],
+    "sourceHeading": 33,
+    "duration": "01:20",
+    "start": "04:45",
+    "end": "06:05",
+    "cue": "形、音、意略加重音；讲清谐音与象征的区别。"
+  },
+  {
+    "number": 7,
+    "title": "连年有余",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "第一件是蓝釉白花鱼莲纹盘。和刚才的年画相比，这一次，莲花与鱼出现在瓷器上。大家可以看盘心：蓝色釉面衬托着白色纹样，莲花、水草和游鱼共同组成一幅水中景象。"
+      },
+      {
+        "type": "speech",
+        "text": "按照刚才的方法，先识别出莲与鱼，再联系莲与连、鱼与余的同音关系，就可以理解其中‘连年有余’的吉祥寓意。自然景物与生活愿望，在同一个画面中结合起来。"
+      },
+      {
+        "type": "speech",
+        "text": "这个例子也提醒我们，传统图案的意义不只存在于独立的绘画中。一个盘子的装饰，同样可以承载对富足和安定的期待。人们把愿望放在器物上，使生活用品除了具有使用和观赏价值，还能表达对日子的盼望。接下来，我们再看一件与婚庆有关的作品。"
+      }
+    ],
+    "sourceHeading": 39,
+    "duration": "01:20",
+    "start": "06:05",
+    "end": "07:25",
+    "cue": "指向蓝釉白花鱼莲纹盘及局部放大图。"
+  },
+  {
+    "number": 8,
+    "title": "喜上眉梢",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "这件作品叫《黄地喜鹊梅花海碗图样》。这里展示的是瓷器的图样，画面主体是梅枝与八只喜鹊。梅枝曲折，喜鹊分布其间，先形成了一个生动的花鸟场景。"
+      },
+      {
+        "type": "speech",
+        "text": "它为什么能让人联想到‘喜上眉梢’？喜鹊具有报喜的象征含义，梅花的‘梅’又与眉毛的‘眉’同音。再结合喜鹊停在枝梢上的画面，就能读出这句祝愿。这个例子里，谐音、象征与构图共同参与了表达。"
+      },
+      {
+        "type": "speech",
+        "text": "根据这页引用的故宫资料，这件图样是同治帝大婚用瓷小样。因此，我们还能知道，这里的喜庆寓意与具体的宫廷婚礼场景相联系。作品的文化意义，也就从一句吉祥话，延伸到了真实的礼仪生活。"
+      }
+    ],
+    "sourceHeading": 45,
+    "duration": "01:15",
+    "start": "07:25",
+    "end": "08:40",
+    "cue": "指出这是瓷器图样；梅与眉同音，喜鹊承担报喜象征。"
+  },
+  {
+    "number": 9,
+    "title": "五福捧寿",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "第三件是黄地粉彩五蝠捧寿字盖碗。蝙蝠为什么会成为吉祥图案中的常见形象？关键就在于蝙蝠的‘蝠’，和福气的‘福’同音。于是，蝙蝠可以被赋予祈福的含义。"
+      },
+      {
+        "type": "speech",
+        "text": "这件盖碗上，五只蝙蝠围绕寿字，组成‘五福捧寿’的纹样单元。需要注意，器身与盖面分布着多组这样的单元，不能把整件器物说成只有五只蝙蝠。看清纹样怎样重复，也是准确理解作品的一部分。"
+      },
+      {
+        "type": "speech",
+        "text": "那么，五福具体指什么？《尚书·洪范》中列出的五福是：寿、富、康宁、攸好德、考终命。简单理解，就是长寿、富足、健康安宁，喜好美德，以及安享天年、善终。"
+      },
+      {
+        "type": "speech",
+        "text": "这里对美好人生的理解，既关心物质条件和身体状态，也关心人的德行，以及生命能否安稳地走到终点。蝙蝠与寿字的组合，让这些原本抽象的愿望，有了可以看见的形象。"
+      }
+    ],
+    "sourceHeading": 51,
+    "duration": "01:30",
+    "start": "08:40",
+    "end": "10:10",
+    "cue": "先解释纹样单元，再慢读五福；攸读yōu。"
+  },
+  {
+    "number": 10,
+    "title": "马上封侯",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "第四件是清代的青玉马上封侯。大家可以看见，马回首卧伏，背上伏着一只猴子。这个造型之所以有意思，就在于它把物象名称和位置关系，一起转化成了语言。"
+      },
+      {
+        "type": "speech",
+        "text": "猴子的‘猴’，与侯爵的‘侯’同音；猴子在马背上，提供了‘马上’这个画面线索。而‘马上’在日常语言里，又有迅速、立即的意思。结合起来，就形成了‘马上封侯’的吉祥寓意。"
+      },
+      {
+        "type": "speech",
+        "text": "封侯涉及爵位与社会地位，因此，这类图案反映的是传统社会中对功名、仕途与地位提升的期待。我们今天欣赏它，一方面可以体会造型与语言结合的巧思，另一方面也要把其中的功名理想放回历史环境中理解。"
+      }
+    ],
+    "sourceHeading": 58,
+    "duration": "01:15",
+    "start": "10:10",
+    "end": "11:25",
+    "cue": "依次指马、猴，再说明侯与马上两层语言联系。"
+  },
+  {
+    "number": 11,
+    "title": "福在眼前",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "第五件是金嵌玉柄叉。这是一件体量较小的器物，但它同样安排了可以被解读的吉祥线索。看局部，上方装饰着蝙蝠，下方有古钱纹，古钱中间还能看到孔眼。"
+      },
+      {
+        "type": "speech",
+        "text": "其中，‘蝠’与‘福’同音，‘钱’与‘前’谐音；钱上的孔眼，则为‘眼’提供了视觉联想。把福、眼、前这些线索组合起来，就形成‘福在眼前’的寓意。这里既有声音的转换，也有对形状的借用。"
+      },
+      {
+        "type": "speech",
+        "text": "和前面较为醒目的瓷器纹样相比，这件作品把祝福藏在了精细的装饰细节中。只有认真观察，才能发现它的表达巧思。五个案例看下来，我们也就能理解：吉祥图案的阅读，需要同时注意画了什么、怎样组合，以及它借用了哪些语言和文化联系。"
+      }
+    ],
+    "sourceHeading": 64,
+    "duration": "01:15",
+    "start": "11:25",
+    "end": "12:40",
+    "cue": "指向金叉上部蝙蝠与下方古钱，说明钱孔的视觉联想。"
+  },
+  {
+    "number": 12,
+    "title": "吉祥密码图鉴",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "把五个案例放在一起，我们可以看到不同的祝愿主题：连年有余，关心富足与安定；喜上眉梢，表达喜庆与幸福；五福捧寿，寄托福寿与安宁；马上封侯，体现功名与地位的期待；福在眼前，则把祈福放进了器物细节。"
+      },
+      {
+        "type": "speech",
+        "text": "这些作品选用的形象和材料各不相同，却都通过图像、语言与文化联想，把人们心里的愿望转化成了能够被观看和理解的艺术形式。"
+      }
+    ],
+    "sourceHeading": 70,
+    "duration": "00:50",
+    "start": "12:40",
+    "end": "13:30",
+    "cue": "总结五个案例，不再逐件重复分析。"
+  },
+  {
+    "number": 13,
+    "title": "吉祥走进生活",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "这些图案会出现在哪里？前面的作品已经提供了不少线索。吉祥纹样可以装饰瓷器、玉器、织绣和金银器，也可以出现在年画、剪纸与刺绣中。材料不同，制作方式和使用场合也不同。"
+      },
+      {
+        "type": "speech",
+        "text": "在宫廷中，它们常常与祝寿、婚庆等礼仪相联系，例如刚才与大婚有关的喜鹊梅花图样。在民间，年画等艺术形式，则让祝愿进入节庆和家庭日常。"
+      },
+      {
+        "type": "speech",
+        "text": "我们由此可以看到，理解吉祥图案，除了研究图案本身，也要看它怎样被使用。人们在什么时刻送出它、摆放它、欣赏它，都会帮助我们理解，这份祝福为什么需要被表达。"
+      }
+    ],
+    "sourceHeading": 75,
+    "duration": "01:10",
+    "start": "13:30",
+    "end": "14:40",
+    "cue": "从单件文物转入宫廷与民间两种生活场景。"
+  },
+  {
+    "number": 14,
+    "title": "图案背后的中国人",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "进一步看，图案背后也藏着人们对生活的理解。‘连年有余’关注物质充裕和生活稳定；‘喜上眉梢’关注喜事与美好的情绪；‘五福捧寿’重视长寿、健康与安宁；‘马上封侯’则涉及特定社会环境中的功名追求。"
+      },
+      {
+        "type": "speech",
+        "text": "因此，传统吉祥图案也可以成为观察社会生活的一扇窗口。通过这些具体形象，我们能够接近当时的人们关心什么、期待什么。"
+      },
+      {
+        "type": "speech",
+        "text": "当然，不同愿望需要区别看待。对平安、富足与健康的珍视，今天依然容易理解；古代以封侯为代表的地位理想，则需要结合当时的社会制度来认识。这样，才能更具体地理解传统文化。"
+      }
+    ],
+    "sourceHeading": 81,
+    "duration": "01:10",
+    "start": "14:40",
+    "end": "15:50",
+    "cue": "概括生活愿望，保留功名观念的历史语境。"
+  },
+  {
+    "number": 15,
+    "title": "古韵新声",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "这种借音表达的方式，也延续到了今天。看这一页的现代创意，‘西笑颜开’‘美檬成真’‘桃人欢喜’‘知竹常乐’，都借助日常物象的名称，让人联想到熟悉的词语。"
+      },
+      {
+        "type": "speech",
+        "text": "不过，这些例子中有些存在声调或读音差异，因此更适合称为谐音、近音的创意，不能一概当作完全同音。它们表达得比较轻松，也更强调幽默感和个性。"
+      },
+      {
+        "type": "speech",
+        "text": "传统吉祥纹样往往与礼俗和祝福相联系，现代设计则把相似的语言思路用在文创和日常表达中。我们关注的，是这种方法怎样被继续使用：人们仍然愿意通过一个熟悉的形象，把一句好话表达得更有趣。"
+      }
+    ],
+    "sourceHeading": 87,
+    "duration": "01:10",
+    "start": "15:50",
+    "end": "17:00",
+    "cue": "指向现代文创例子；明确存在近音和声调差异。"
+  },
+  {
+    "number": 16,
+    "title": "让祝福走进日常",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "说到这里，我们再把目光从展品和设计作品，转向身边的生活。过节、吃饭、办喜事时，我们其实也会使用这些借音表达祝愿的方式。"
+      }
+    ],
+    "sourceHeading": 93,
+    "duration": "00:20",
+    "start": "17:00",
+    "end": "17:20",
+    "cue": "过渡页，读完直接翻页。"
+  },
+  {
+    "number": 17,
+    "title": "春节为什么要贴倒福",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "先看春节里常见的一种表达：倒贴福字。把福字转一个方向，就可以说‘福倒了’；由于倒下的‘倒’和到来的‘到’同音，这句话又让人联想到‘福到了’，于是形成了福气来到的祝愿。"
+      },
+      {
+        "type": "speech",
+        "text": "和前面的器物相比，这里参与表达的是字本身，以及它被摆放的方向。可见，同样的谐音思路，可以出现在不同形式中。"
+      },
+      {
+        "type": "speech",
+        "text": "类似的例子还有年糕：糕与高同音，让人联想到步步高升；节日餐桌上的鱼，又借鱼与余的同音，表达年年有余。熟悉的食物和装饰，因为这些语言联系，获得了额外的节日意味。"
+      }
+    ],
+    "sourceHeading": 97,
+    "duration": "01:05",
+    "start": "17:20",
+    "end": "18:25",
+    "cue": "先指倒福，再带到年糕与节日的鱼；不扩大为所有福字都倒贴。"
+  },
+  {
+    "number": 18,
+    "title": "婚床上藏着什么祝福",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "再看部分地区的传统婚俗。红枣、花生、桂圆、莲子，四样物品放在一起，能够拼出‘早生贵子’这句传统祝愿。"
+      },
+      {
+        "type": "speech",
+        "text": "这里的组合方式并不完全一样：枣与早同音，桂与贵同音；花生取的是名称中的‘生’，莲子取的是名称中的‘子’。所以，它同时使用了谐音和从名称中取字的方式。把具体过程说清楚，比笼统地说四样东西都是谐音更准确。"
+      },
+      {
+        "type": "speech",
+        "text": "这种习俗寄托着传统家庭对家族延续的期待。我们在课堂中介绍它，是为了理解相应的历史文化和地方习俗。它也让我们看到，祝愿可以通过物品的组合来表达，进入人生中的重要场合。"
+      }
+    ],
+    "sourceHeading": 103,
+    "duration": "01:10",
+    "start": "18:25",
+    "end": "19:35",
+    "cue": "按红枣、花生、桂圆、莲子的顺序指示，不组织现场互动。"
+  },
+  {
+    "number": 19,
+    "title": "从鱼莲纹盘到年夜饭",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "把这两幅图放在一起，就能看见前后内容的联系。左边是我们分析过的鱼莲纹盘，右边是节日餐桌上的鱼。一个通过器物纹样传意，一个通过餐桌上的食物寄托祝福。"
+      },
+      {
+        "type": "speech",
+        "text": "两者都借用了鱼与余的同音关系；鱼莲纹盘还通过莲与连的联系，进一步组合出连续富足的祝愿。同一种表达思路，能够从艺术装饰走进生活场景，让传统文化变得具体而可亲近。"
+      }
+    ],
+    "sourceHeading": 109,
+    "duration": "00:50",
+    "start": "19:35",
+    "end": "20:25",
+    "cue": "指向左右两幅图片，重点说明同一借音思路的延续。"
+  },
+  {
+    "number": 20,
+    "title": "从宫廷到民间",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "再回到宫廷与民间的对照。左边的五蝠捧寿和喜鹊梅花，分别与福寿祝愿、婚庆礼仪相联系；右边的民间年画，则通过莲与鱼等形象，表达对生活富足的期待。"
+      },
+      {
+        "type": "speech",
+        "text": "它们的材料、工艺和使用环境不同，借助语言与图像表达美好愿望的做法却可以相通。我们欣赏文物时，也就能够从中找到一些与日常经验相联系的线索。"
+      }
+    ],
+    "sourceHeading": 114,
+    "duration": "00:45",
+    "start": "20:25",
+    "end": "21:10",
+    "cue": "对照宫廷器物与民间年画，简短回扣前文。"
+  },
+  {
+    "number": 21,
+    "title": "原来生活中还有这么多谐音",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "最后，再看几个轻松的例子：柿子写成‘柿柿如意’，橙子写成‘橙心橙意’，草莓写成‘莓有烦恼’，苹果写成‘苹安喜乐’。读到它们时，我们会自然联想到事事如意、诚心诚意、没有烦恼和平安喜乐。"
+      },
+      {
+        "type": "speech",
+        "text": "这些创意仍然依靠熟悉的语音联系，但表达语气更加日常。它说明，传统文化中的表达方法，今天依然可以被理解、被使用，并产生新的趣味。"
+      }
+    ],
+    "sourceHeading": 119,
+    "duration": "00:45",
+    "start": "21:10",
+    "end": "21:55",
+    "cue": "自然读出四个水果谐音，保持轻松语气。"
+  },
+  {
+    "number": 22,
+    "title": "纹样无声 吉祥有音",
+    "blocks": [
+      {
+        "type": "speech",
+        "text": "回到今天的主题，传统吉祥图案中的谐音表达，让具体物象与美好愿望建立了联系。莲花与鱼可以说出富足，梅枝与喜鹊可以传达喜庆，蝙蝠与寿字可以寄托福寿。"
+      },
+      {
+        "type": "speech",
+        "text": "阅读这些作品，需要看见形象，听懂语言联系，也理解背后的生活场景。这样，我们欣赏到的就不只是装饰的美，还能了解人们怎样表达对生活的期待。"
+      },
+      {
+        "type": "speech",
+        "text": "从文物上的纹样，到今天熟悉的节俗与日常创意，这种借音传情的方式仍在延续。纹样无声，吉祥有音。我们的汇报到此结束，谢谢老师和同学们！"
+      }
+    ],
+    "sourceHeading": 124,
+    "duration": "01:05",
+    "start": "21:55",
+    "end": "23:00",
+    "cue": "收束主题，末句停顿后致谢。"
+  }
+]</script>
+<script>
+'use strict';
+(() => {
+ const pages=JSON.parse(document.getElementById('speechData').textContent);
+ const $=id=>document.getElementById(id);
+ const KEY='auspicious-teleprompter-v1';
+ const storage={read(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch{return{}}},write(v){try{localStorage.setItem(KEY,JSON.stringify(v))}catch{}}};
+ const saved=storage.read();
+ const defaultFont=matchMedia('(max-width:540px)').matches?28:40;
+ let font=Number.isFinite(saved.font)?Math.min(72,Math.max(20,saved.font)):defaultFont;
+ let index=0,tips=saved.tips!==false,theme=saved.theme==='light'?'light':'dark',cueOpen=saved.cueOpen!==false;
+ let activeOverlay=null,lastFocus=null,toastTimeout=null;
+ let elapsed=0,startedAt=null,hasStarted=false,lastDisplayed=-1;
+ const lastPage=Number.isInteger(saved.page)&&saved.page>0&&saved.page<pages.length?saved.page:null;
+ const persist=()=>storage.write({font,tips,theme,cueOpen,page:index});
+ function applySettings(){
+  document.documentElement.style.setProperty('--font-size',font+'px');
+  document.documentElement.dataset.theme=theme;
+  $('fontValue').textContent=font+'px';
+  $('fontDown').disabled=font<=20;$('fontUp').disabled=font>=72;
+  $('cueDetails').hidden=!tips;$('cueDetails').open=cueOpen;
+  $('tipsToggle').textContent=tips?'已显示':'已隐藏';$('tipsToggle').setAttribute('aria-pressed',String(tips));
+  $('themeToggle').textContent=theme==='dark'?'切为浅色':'切为深色';
+  document.querySelector('meta[name="theme-color"]').content=theme==='dark'?'#111315':'#f6f4ee';
+ }
+ function paragraph(text,className){const p=document.createElement('p');p.textContent=text;if(className)p.className=className;return p;}
+ function phase(text){const s=document.createElement('span');s.className='phase-label';s.textContent=text;return s;}
+ function renderPage(n,{save=true,animate=true}={}){
+  index=Math.max(0,Math.min(pages.length-1,n));const p=pages[index];
+  $('pageNumber').textContent=String(p.number).padStart(2,'0');$('pageTitle').textContent=p.title;
+  $('pageDuration').textContent=p.duration;$('pageRange').textContent='原稿 '+p.start+' — '+p.end;
+  $('pageProgress').setAttribute('aria-valuenow',p.number);$('pageProgress').setAttribute('aria-valuetext',`第 ${p.number} 页，共 22 页`);
+  $('pageProgressFill').style.width=(p.number/pages.length*100)+'%';
+  $('cueText').textContent=p.cue;const fragment=document.createDocumentFragment();
+  if(p.number===5)fragment.append(phase('视频前 · 引导语'));
+  for(const b of p.blocks){
+   if(b.type==='speech')fragment.append(paragraph(b.text));
+   else{const box=document.createElement('aside');box.className='inline-cue';box.setAttribute('aria-label','视频操作提示，无需朗读');const label=document.createElement('small');label.textContent='操作提示 · 在 PPT 中播放';box.append(label,paragraph(b.text));fragment.append(box,phase('视频后 · 过渡语'));}
+  }
+  $('speech').replaceChildren(fragment);$('prev').disabled=index===0;$('next').disabled=index===pages.length-1;
+  $('readEnd').textContent=index===pages.length-1?'本次演讲结束':'本页讲稿结束 · 可翻至下一页';
+  $('reader').scrollTop=0;
+  if(animate){$('readingInner').classList.remove('enter');void $('readingInner').offsetWidth;$('readingInner').classList.add('enter');}
+  if(save){persist();$('resume').hidden=true;}
+  $('pageAnnounce').textContent=`第 ${p.number} 页，共 22 页，${p.title}，建议用时 ${p.duration}`;
+  document.title=String(p.number).padStart(2,'0')+' / 22 · '+p.title+' · 吉祥图案提词器';
+ }
+ function changePage(delta){if(activeOverlay)return;const n=index+delta;if(n>=0&&n<pages.length)renderPage(n);}
+ function buildPageList(){
+  $('pageList').replaceChildren(...pages.map((p,i)=>{
+   const button=document.createElement('button');button.className='page-option'+(i===index?' current':'');button.dataset.page=i;
+   if(i===index)button.setAttribute('aria-current','page');
+   const num=document.createElement('span');num.className='option-number';num.textContent=String(p.number).padStart(2,'0');
+   const text=document.createElement('span');text.className='option-title';text.textContent=p.title;
+   const meta=document.createElement('span');meta.className='option-meta';meta.textContent=p.duration+' · '+p.start+' — '+p.end;
+   text.append(meta);button.append(num,text);button.addEventListener('click',()=>{renderPage(i);closeOverlay();});return button;
+  }));
+ }
+ function openOverlay(id){
+  if(activeOverlay)closeOverlay();lastFocus=document.activeElement;activeOverlay=$(id);activeOverlay.hidden=false;
+  $('app').setAttribute('inert','');$('app').setAttribute('aria-hidden','true');
+  const focusEl=id==='pagesOverlay'?activeOverlay.querySelector('.current'):activeOverlay.querySelector('[data-close]');
+  (focusEl||activeOverlay.querySelector('.modal')).focus();
+  if(id==='pagesOverlay')focusEl?.scrollIntoView({block:'nearest'});
+ }
+ function closeOverlay(){if(!activeOverlay)return;activeOverlay.hidden=true;activeOverlay=null;$('app').removeAttribute('inert');$('app').removeAttribute('aria-hidden');if(lastFocus?.isConnected&&!lastFocus.disabled)lastFocus.focus();else $('reader').focus({preventScroll:true});}
+ function showToast(text){$('toast').textContent=text;$('toast').hidden=false;clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>$('toast').hidden=true,4200);}
+ const seconds=()=>Math.floor((elapsed+(startedAt===null?0:performance.now()-startedAt))/1000);
+ function formatTime(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+ function updateTimer(force=false){
+  const s=seconds();if(s===lastDisplayed&&!force)return;lastDisplayed=s;
+  $('timerClock').textContent=formatTime(s);$('timeProgressFill').style.width=Math.min(100,s/1500*100)+'%';
+  $('timeProgress').setAttribute('aria-valuenow',Math.min(s,1500));$('timeProgress').setAttribute('aria-valuetext','已用 '+formatTime(s)+'，上限 25:00');
+  $('timer').classList.toggle('warning',s>=1380&&s<1500);$('timer').classList.toggle('over',s>=1500);
+  const state=startedAt!==null?'计时中':hasStarted?'已暂停':'未开始';
+  const detail=s>=1500?'已超时 '+formatTime(s-1500):s>=1380?'剩余 '+formatTime(1500-s):'计划 23:00';
+  $('timerState').textContent=state+' · '+detail;$('timerClock').setAttribute('aria-label','总耗时 '+formatTime(s));
+  $('timerToggle').textContent=startedAt!==null?'暂停':hasStarted?'继续':'开始';$('reset').disabled=!hasStarted;
+ }
+ function toggleTimer(){if(startedAt===null){startedAt=performance.now();hasStarted=true;}else{elapsed+=performance.now()-startedAt;startedAt=null;}updateTimer(true);}
+ function resetTimer(){elapsed=0;startedAt=null;hasStarted=false;updateTimer(true);showToast('演讲计时已重置');}
+ function fullElement(){return document.fullscreenElement||document.webkitFullscreenElement;}
+ function syncFull(){const active=Boolean(fullElement())||document.body.classList.contains('focus-mode');$('fullscreen').setAttribute('aria-pressed',String(active));$('fullscreen').setAttribute('aria-label',active?'退出全屏或专注阅读':'进入全屏');$('fullscreen').title=active?'退出全屏或专注阅读':'全屏阅读';}
+ function fallbackFull(){document.body.classList.add('focus-mode');syncFull();showToast('此浏览器未开启网页全屏，已切换专注阅读；再次点击全屏按钮可退出。');}
+ async function toggleFull(){
+  try{
+   if(fullElement()){const fn=document.exitFullscreen||document.webkitExitFullscreen;await fn.call(document);document.body.classList.remove('focus-mode');}
+   else if(document.body.classList.contains('focus-mode'))document.body.classList.remove('focus-mode');
+   else{const fn=document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen;if(fn)await fn.call(document.documentElement);else fallbackFull();}
+  }catch{fallbackFull();}syncFull();
+ }
+ $('prev').addEventListener('click',()=>changePage(-1));$('next').addEventListener('click',()=>changePage(1));
+ $('pagePicker').addEventListener('click',()=>{buildPageList();openOverlay('pagesOverlay');});
+ $('settingsButton').addEventListener('click',()=>openOverlay('settingsOverlay'));
+ $('fontDown').addEventListener('click',()=>{font=Math.max(20,font-2);applySettings();persist();});
+ $('fontUp').addEventListener('click',()=>{font=Math.min(72,font+2);applySettings();persist();});
+ $('tipsToggle').addEventListener('click',()=>{tips=!tips;applySettings();persist();});
+ $('themeToggle').addEventListener('click',()=>{theme=theme==='dark'?'light':'dark';applySettings();persist();});
+ $('firstPage').addEventListener('click',()=>{renderPage(0);closeOverlay();});
+ $('cueDetails').addEventListener('toggle',()=>{const nextOpen=$('cueDetails').open;if(cueOpen!==nextOpen){cueOpen=nextOpen;persist();}});
+ $('timerToggle').addEventListener('click',toggleTimer);$('reset').addEventListener('click',resetTimer);$('fullscreen').addEventListener('click',toggleFull);
+ document.addEventListener('fullscreenchange',syncFull);document.addEventListener('webkitfullscreenchange',syncFull);
+ document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',closeOverlay));
+ document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeOverlay();}));
+ document.addEventListener('keydown',e=>{
+  if(activeOverlay){
+   if(e.key==='Escape'){e.preventDefault();closeOverlay();}
+   if(e.key==='Tab'){const fs=[...activeOverlay.querySelectorAll('button:not(:disabled),[tabindex="0"]')].filter(el=>el.getClientRects().length);const first=fs[0],last=fs[fs.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}
+   return;
+  }
+  if(e.key==='Escape'&&document.body.classList.contains('focus-mode')){document.body.classList.remove('focus-mode');syncFull();return;}
+  if(e.altKey||e.ctrlKey||e.metaKey||e.target.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))return;
+  let d=0;if(['ArrowRight','PageDown'].includes(e.key))d=1;else if(['ArrowLeft','PageUp'].includes(e.key))d=-1;
+  else if((e.key===' '||e.code==='Space')&&!e.target.closest('button,summary,a,[role="button"]'))d=1;
+  if(d){e.preventDefault();if(!e.repeat)changePage(d);}
+ });
+ let touch=null;
+ $('reader').addEventListener('touchstart',e=>{if(e.touches.length!==1||e.target.closest('button,summary,a')){touch=null;return;}const t=e.touches[0];touch={x:t.clientX,y:t.clientY,time:performance.now(),axis:null};},{passive:true});
+ $('reader').addEventListener('touchmove',e=>{if(!touch||e.touches.length!==1){touch=null;return;}const t=e.touches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y;if(!touch.axis&&Math.max(Math.abs(dx),Math.abs(dy))>12)touch.axis=Math.abs(dx)>Math.abs(dy)*2?'x':'y';if(touch.axis==='x'&&e.cancelable)e.preventDefault();},{passive:false});
+ $('reader').addEventListener('touchend',e=>{if(!touch)return;const t=e.changedTouches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y;const swipe=touch.axis!=='y'&&Math.abs(dx)>85&&Math.abs(dy)<38&&Math.abs(dx)>Math.abs(dy)*2.3&&performance.now()-touch.time<850;touch=null;if(swipe){if(e.cancelable)e.preventDefault();changePage(dx<0?1:-1);}},{passive:false});
+ $('reader').addEventListener('touchcancel',()=>touch=null,{passive:true});
+ $('restorePage').addEventListener('click',()=>renderPage(lastPage));$('dismissResume').addEventListener('click',()=>{$('resume').hidden=true;persist();});
+ applySettings();renderPage(0,{save:false,animate:false});updateTimer(true);setInterval(updateTimer,250);
+ if(lastPage!==null){$('resumeText').textContent='上次读到第 '+(lastPage+1)+' 页';$('restorePage').textContent='继续第 '+(lastPage+1)+' 页';$('resume').hidden=false;}
+})();
+</script>
+</body>
+</html>
