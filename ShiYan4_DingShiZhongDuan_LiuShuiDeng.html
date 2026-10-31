@@ -21,15 +21,106 @@
 @media(max-width:370px){.reg-bit strong{font-size:9px}.register-grid .panel{padding:14px}}
 
 @media(max-width:760px){.speed{gap:7px}.speed input{max-width:95px;min-width:60px;flex:1}#speedText{white-space:nowrap}.line-controls{gap:5px}.line-controls button{padding:7px 8px;font-size:11px;white-space:nowrap}.line-controls span{font-size:9px}}
+
+
+/* Navigation layout: desktop rail / phone bottom bar. */
+html{scroll-padding-top:24px;scroll-padding-bottom:24px}
+body{padding-left:112px}
+.nav-shell{position:fixed;inset:0 auto 0 0;width:112px;background:var(--dark);border:0;border-right:1px solid #294253;color:#dce8f0;z-index:45}
+.nav-shell>.wrap{max-width:none;width:100%;padding:0;min-height:100%;height:100dvh;display:flex;flex-direction:column;overflow-y:auto}
+.rail-brand{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:95px;color:#eaf5fc;text-decoration:none;border-bottom:1px solid #334b5b;background:#0b1c28}
+.rail-brand strong{font:38px/1 var(--mono);letter-spacing:-.07em}
+.rail-brand span{font:9px var(--mono);letter-spacing:.1em;color:#9eb4c3}
+.rail-directory{background:transparent;border:0;border-bottom:1px solid #334b5b;border-radius:0;color:#d6e7f1;display:flex;align-items:center;justify-content:center;gap:8px;padding:18px 5px;font-size:12px}
+.rail-directory>span{font:19px var(--mono)}
+.rail-directory:hover{background:#1a394e;color:white}
+.module-nav{display:flex;flex-direction:column;gap:0;background:transparent}
+.module-nav button{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;padding:17px 6px;min-height:94px;background:transparent;color:#b9cddc;text-align:center;border:0;border-left:3px solid transparent}
+.module-nav button:hover{background:#19394e;color:white}
+.module-nav button.active{background:var(--blue);color:white;border-left-color:#64e0ec}
+.nav-no{font:25px/1 var(--mono);opacity:.85}
+.nav-label{font-size:11px;font-weight:500;line-height:1.5}
+.nav-full,.nav-label small{display:none}
+.nav-short{display:block}
+.current-reading{display:flex;flex-direction:column;gap:10px;padding:16px 12px 10px;color:#afc6d6;font-size:10px;line-height:1.8;margin-top:auto}
+.current-reading #currentModule{font-size:10px;overflow-wrap:anywhere}
+.reading-bar{margin:0 12px 12px;height:3px;background:#385162}
+.reading-bar span{background:#64d8e6}
+.rail-top-link{display:block;text-align:center;border-top:1px solid #334b5b;padding:14px 5px 18px;color:#b8cbd8;text-decoration:none;font-size:11px}
+.mobile-reading-header{display:none}
+.section,.explain-side{scroll-margin-top:24px}
+.code-scroll,.explain-scroll{height:clamp(450px,68vh,720px)}
+.code-scroll{overflow-x:hidden}
+.code-line{white-space:normal;align-items:flex-start;padding:7px 16px 8px 0;line-height:1.75}
+.code-line .line-text{min-width:0;max-width:100%;flex:1}
+.code-statement{display:block;white-space:pre-wrap;overflow-wrap:anywhere}
+.inline-comment{display:block;color:#a2bcae;font:12px/1.85 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;padding:3px 0 1px var(--comment-indent,0ch)}
+.line-no{padding-top:0;line-height:1.75}
+.contents-backdrop{position:fixed;inset:0;z-index:80;background:rgba(7,24,37,.5);animation:noteFade .22s ease}
+.contents-panel{position:absolute;left:112px;top:0;bottom:0;width:min(420px,calc(100vw - 112px));background:var(--paper);box-shadow:18px 0 70px #081f3150;display:flex;flex-direction:column;border-right:1px solid #b4c8d8}
+.contents-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:25px 24px 20px;border-top:5px solid var(--blue);border-bottom:1px solid var(--line)}
+.contents-header .eyebrow{font-size:9px}
+.contents-header h2{font-size:27px;margin-top:7px}
+.contents-header button{font-size:12px;white-space:nowrap}
+.contents-list{padding:0 24px 20px;overflow:auto;overscroll-behavior:contain}
+.contents-group{padding:19px 0;border-bottom:1px solid var(--line)}
+.contents-module{display:block;text-align:left;width:100%;padding:8px 0;border:0;background:transparent;font-size:14px;font-weight:650}
+.contents-module .mono{color:var(--blue);font-size:18px;margin-right:8px}
+.contents-links{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.contents-links button{font-size:11px;text-align:left;padding:9px 10px;display:flex;justify-content:space-between;gap:6px}
+.contents-links button span{color:var(--blue)}
+.contents-stages{font-size:11px;margin:12px 0 0;color:var(--muted)}
+.contents-stages summary{cursor:pointer;padding:6px 0}
+.contents-stages button{display:block;text-align:left;width:100%;padding:7px 8px;margin-top:5px;font-size:11px}
+.contents-foot{font-size:10px;color:var(--muted);padding:14px 24px;border-top:1px solid var(--line);margin-top:auto}
+body.directory-open{overflow:hidden}
+@media(min-width:1450px){.code-scroll,.explain-scroll{height:clamp(500px,68vh,780px)}}
+@media(max-width:1050px) and (min-width:761px){.mast-meta{display:none}.reader{grid-template-columns:53% 47%}.wrap{padding:0 23px}.inline-comment{font-size:11px}.code-line{font-size:12px;padding-right:12px}}
+@media(max-width:760px){
+ html{scroll-padding-top:68px;scroll-padding-bottom:100px}
+ body{padding-left:0;padding-bottom:calc(78px + env(safe-area-inset-bottom,0px))}
+ .nav-shell{position:fixed;inset:auto 0 0;width:100%;border:0;border-top:1px solid #2a465c;background:var(--dark)}
+ .nav-shell>.wrap{height:auto;min-height:0;display:block;overflow:visible;padding:0 0 env(safe-area-inset-bottom,0px);background:var(--dark)}
+ .rail-brand,.rail-directory,.rail-top-link,.nav-shell .current-reading,.nav-shell .reading-bar{display:none}
+ .module-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
+ .module-nav button{min-height:70px;border-left:0;border-top:3px solid transparent;border-right:1px solid #294557;padding:9px 5px 10px;gap:7px;display:flex;flex-direction:column}
+ .module-nav button:last-child{border-right:0}
+ .module-nav button.active{border-left:0;border-top-color:#64e0ec;background:#165bd5}
+ .module-nav .nav-no{font:14px/1 var(--mono);margin:0}
+ .module-nav .nav-label{font-size:11px;line-height:1.4;white-space:nowrap}
+ .nav-full{display:none}.nav-short{display:block}
+ .mobile-reading-header{display:block;position:sticky;top:0;z-index:40;background:rgba(245,247,248,.98);border-bottom:1px solid var(--line)}
+ .mobile-reading-row{min-height:51px;display:flex;align-items:center;gap:9px;padding:6px 18px}
+ #mobileModuleLabel{font-size:11px;font-weight:600;line-height:1.5;flex:1;min-width:0}
+ #mobileReadProgress{font:10px var(--mono);color:var(--muted)}
+ #mobileContents{font-size:11px;padding:6px 10px;white-space:nowrap;min-height:34px;border-color:#b9cbd8}
+ .mobile-progress{height:2px;background:#dbe5ec}
+ .mobile-progress span{display:block;height:100%;width:0;background:var(--cyan);transition:width .2s}
+ .section,.explain-side{scroll-margin-top:68px}
+ .code-scroll{height:410px;height:min(58svh,470px);min-height:300px}
+ .explain-scroll{height:390px}
+ .code-line{font-size:12px;padding:7px 12px 8px 0}
+ .inline-comment{font-size:12px;line-height:1.85;padding-top:4px}
+ .line-no{flex-basis:27px;margin-right:10px}
+ .toast{bottom:calc(91px + env(safe-area-inset-bottom,0px))}
+ .contents-panel{left:auto;right:0;top:0;bottom:0;width:min(420px,100vw)}
+ .contents-header{padding:calc(18px + env(safe-area-inset-top,0px)) 20px 18px}
+ .contents-header h2{font-size:25px}
+ .contents-list{padding-left:20px;padding-right:20px}
+ .contents-foot{padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+ .page-footer{padding-bottom:25px}
+}
+@media print{body{padding:0}.mobile-reading-header,.contents-backdrop{display:none!important}.code-scroll,.explain-scroll{height:auto;min-height:0}.inline-comment{color:#4e6957}}
+
 </style></head>
 <body>
 <header class="masthead"><div class="wrap mast-inner"><span class="brand">8051 / INTERACTIVE LEARNING LAB</span><span class="mast-meta">FIELD NOTES 04 · C51 / TIMER / INTERRUPT</span><span class="eyebrow">实验四 · 学习实验室</span></div></header>
 <div class="wrap"><div class="cover" id="top"><div><div class="eyebrow">Experiment 04 — Timer Interrupt</div><h1>让时间，<span>推动一束光。</span></h1><p class="deck">从一行 C51，到一次中断。沿着真实源代码，理解定时器、CPU 与 8 位灯型如何共同完成一次流水。</p><div class="specs"><span>11.0592 MHz / 12T</span><span>T0 · MODE 1</span><span>50 ms × 2 ≈ 100 ms</span></div></div><div class="cover-art" aria-hidden="true"><svg viewBox="0 0 430 180"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#dfe6eb" stroke-width=".6"/></pattern></defs><rect width="430" height="180" fill="url(#grid)"/><path d="M17 133H70V40H150V133H230V40H310V133H408" fill="none" stroke="#165bd5" stroke-width="2.5"/><path d="M150 25V155M310 25V155" stroke="#cf572c" stroke-dasharray="3 5"/><circle cx="150" cy="133" r="5" fill="#cf572c"/><circle cx="310" cy="133" r="5" fill="#cf572c"/><path d="M150 162H310M150 158V167M310 158V167" stroke="#007e93"/><g font-family="monospace" font-size="10" fill="#61717e"><text x="22" y="24">TIMER 0 / DISCRETE EVENTS</text><text x="164" y="31">01</text><text x="324" y="31">02</text><text x="195" y="177">~50 ms</text><text x="320" y="154">P1 ← led</text></g></svg><div class="art-note">TIMING CONCEPT / NOT A MEASURED WAVEFORM</div></div></div></div>
-<div class="nav-shell"><div class="wrap"><nav class="module-nav" aria-label="三个学习模块"><button data-module="0" class="active" aria-current="page"><span class="nav-no">01</span><span class="nav-label"><span class="nav-full">C51 源代码深度精讲</span><span class="nav-short">C51 代码精讲</span><small>READ · TRACE · EXPLORE</small></span></button><button data-module="1"><span class="nav-no">02</span><span class="nav-label"><span class="nav-full">寄存器与核心知识点</span><span class="nav-short">寄存器与知识点</span><small>REGISTERS · TIMING</small></span></button><button data-module="2"><span class="nav-no">03</span><span class="nav-label"><span class="nav-full">教师提问与答案解析</span><span class="nav-short">教师问答解析</span><small>EXPLAIN · PREDICT · APPLY</small></span></button></nav><div class="current-reading"><span id="currentModule">正在阅读：C51 源代码深度精讲</span><span id="readProgress">本模块 0%</span></div><div class="reading-bar"><span id="progressFill"></span></div></div></div>
+<div class="nav-shell"><div class="wrap"><a class="rail-brand" href="#top" aria-label="实验四，回到封面"><strong>04</strong><span>TIMER LAB</span></a><button class="rail-directory" id="contentsToggle" aria-controls="contentsBackdrop" aria-expanded="false"><span aria-hidden="true">☰</span>目录</button><nav class="module-nav" aria-label="三个学习模块"><button data-module="0" class="active" aria-current="page"><span class="nav-no">01</span><span class="nav-label"><span class="nav-full">C51 源代码深度精讲</span><span class="nav-short">C51 代码精讲</span><small>READ · TRACE · EXPLORE</small></span></button><button data-module="1"><span class="nav-no">02</span><span class="nav-label"><span class="nav-full">寄存器与核心知识点</span><span class="nav-short">寄存器与知识点</span><small>REGISTERS · TIMING</small></span></button><button data-module="2"><span class="nav-no">03</span><span class="nav-label"><span class="nav-full">教师提问与答案解析</span><span class="nav-short">教师问答解析</span><small>EXPLAIN · PREDICT · APPLY</small></span></button></nav><div class="current-reading"><span id="currentModule">正在阅读：C51 源代码深度精讲</span><span id="readProgress">本模块 0%</span></div><div class="reading-bar"><span id="progressFill"></span></div><a class="rail-top-link" href="#top">↑ 顶部</a></div></div><div class="mobile-reading-header"><div class="mobile-reading-row"><span id="mobileModuleLabel">01 C51 源代码深度精讲</span><span id="mobileReadProgress">0%</span><button id="mobileContents" aria-controls="contentsBackdrop" aria-expanded="false">☰ 目录</button></div><div class="mobile-progress"><span id="mobileProgressFill"></span></div></div>
 <main class="wrap">
 <article class="module" id="module0">
 <section class="section" id="code"><div class="section-head"><div><div class="section-title"><span class="section-no">01</span><h2>读懂每一行。</h2></div><p class="section-sub">点击代码，查看含义、语法、作用、状态变化与修改后果。行号始终对应原始文件。</p><nav class="subnav" aria-label="模块一目录"><a href="#code">逐行精讲</a><a href="#trace">执行追踪</a><a href="#rotation">循环左移</a><a href="#whatif">修改与故障</a></nav></div><span class="tag blue">SOURCE FIRST / 原始代码优先</span></div>
-<div class="toolbar"><button class="primary" id="studyView" aria-pressed="true">互动学习视图</button><button id="rawView" aria-pressed="false">完整原始代码</button><button id="copyCode" class="push">复制完整原始代码</button></div><div class="source-note">ShiYan4(1).c · GBK 已解码 · 45 行 · 与本次上传的 ShiYan4(2).c 字节一致。互动视图隐藏行尾注释，原始视图完整保留。</div>
+<div class="toolbar"><button class="primary" id="studyView" aria-pressed="true">互动学习视图</button><button id="rawView" aria-pressed="false">完整原始代码</button><button id="copyCode" class="push">复制完整原始代码</button></div><div class="source-note">ShiYan4(1).c · GBK 已解码 · 45 行 · 与本次上传的 ShiYan4(2).c 字节一致。互动视图直接显示全部原注释，注释放在对应语句下方自动换行；点击代码可继续查看详细解析。</div>
 <div id="interactiveView"><div class="stage-tabs" id="stageTabs" aria-label="程序学习阶段"></div><div class="reader"><div class="code-side"><div class="pane-bar"><span><i></i>ShiYan4(1).c</span><span id="stageName">01 / 头文件与变量</span></div><div class="code-scroll" id="codeScroll" tabindex="0" aria-label="C51 代码行列表"></div><div class="mobile-explain-jump"><span id="mobileLineLabel">已选第 3 行</span><button id="jumpExplanation">查看对应解析 ↓</button></div></div><div class="explain-side" id="explanation"><div class="pane-bar"><span>LINE NOTES / 逐行解析</span><span id="explainLine">L03</span></div><div class="explain-scroll" id="explainContent" tabindex="0" aria-label="所选代码的讲解"></div></div></div><div class="line-controls"><button id="prevLine">← 上一有效行</button><span id="linePosition"></span><button id="nextLine">下一有效行 →</button></div></div>
 <div class="raw-view" id="rawContainer" hidden><pre id="rawCode" tabindex="0" aria-label="完整原始C51代码"></pre></div>
 <details class="errata"><summary>教学勘误 · 原注释中的周期公式需要修正</summary><p>原始第 1 行写有 <code>机器周期(T=1/Fosc)</code>。<code>1/Fosc</code> 是振荡周期；传统 12T 8051 的机器周期应为 <code>Tmc = 12/Fosc</code>。因此 11.0592MHz 下，50ms 需要 46080 次计数，原程序的 <code>0x4C00</code> 初值是正确的。这里只作独立说明，原代码逐字保留。</p><p>第 25 行“溢出 CPU 转去处理中断”是简写：溢出先置位 TF0，满足允许条件且到达可响应时机后 CPU 才进入 ISR。第 27 行为 main 的右花括号，正常流程会一直停留在无限循环内，不会执行到“主函数结束”。</p></details></section>
@@ -54,7 +145,7 @@ _crol_(0xFE, 1) = 1111 1101 = 0xFD
 </article>
 <div class="footer-nav"><button id="prevModule">← 上一模块</button><div class="now" id="footerModule">01 / C51 源代码深度精讲</div><button id="nextModule">下一模块 →</button></div>
 <footer class="page-footer"><div style="display:flex;justify-content:space-between;gap:15px"><span>8051 TIMER INTERRUPT · INTERACTIVE C51 LEARNING LAB</span><a href="#code" id="returnCode">返回代码精讲 ↑</a></div><details><summary>资料依据、源文件指纹与模型说明</summary><div class="source-list"><p style="margin-top:10px">主资料：ShiYan4(1).c，1911 字节，GBK 编码，SHA-256：c686dff6360bdd411cd3e6cb8088cbdd97d08c8d8ebc36d6b9455370722561ec。与本次附件 ShiYan4(2).c 完全一致。原始视图与复制按钮使用同一份未经改写的解码字符串（含原有换行、空格、制表符与注释）。</p><p>交互参考：<a href="https://drive.google.com/file/d/1ux9MnxLuH4N_b38I9FBsncFT-Sg-oDSH/view" target="_blank" rel="noopener">实验三交互讲义</a>（已阅读，视觉重新设计）。理论参考：项目教材《6.2 定时/计数器接口》，寄存器格式见教材第 127 页；<a href="https://www.keil.com/download/docs/96.asp" target="_blank" rel="noopener">Keil Timer 0 Mode 1 示例</a>；<a href="https://community.nxp.com/pwmxy87654/attachments/pwmxy87654/52136tkb-board/130/1/80C51%20Family%20Hardware%20Description.pdf" target="_blank" rel="noopener">Philips/NXP 80C51 Family Hardware Description</a>（TF0 清除机制）。外部链接仅供查阅，全部学习功能无需网络。</p><p>教学模型不模拟每一机器周期，不提供实际硬件测量结果，不代替编译、调试和电路仿真。约 50ms / 约 100ms 区分理想计数区间与实际执行周期。</p></div></details></footer>
-</main><div class="toast" id="toast" role="status" aria-live="polite"></div>
+</main><div class="contents-backdrop" id="contentsBackdrop" hidden><aside class="contents-panel" role="dialog" aria-modal="true" aria-labelledby="contentsTitle"><header class="contents-header"><div><span class="eyebrow">READING INDEX / EXPERIMENT 04</span><h2 id="contentsTitle">阅读目录</h2></div><button id="contentsClose" aria-label="关闭阅读目录">关闭 ×</button></header><div class="contents-list" id="contentsList"></div><div class="contents-foot">三个主模块 · 选择重点，直接开始阅读</div></aside></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script id="original-source" type="application/json">"//N = 定时时长/机器周期(T=1/Fosc)\r\n//初值= 65536-46080 = 19456 = 0x4C00\r\n#include <reg51.h>          //引入8051特殊功能寄存器定义，才能使用P1、TMOD、EA等\r\n#include <intrins.h>        //引入Keil C51内部函数声明，使用循环左移函数 _crol_\r\n\r\nunsigned char led = 0xFE;    //8位无符号变量保存灯型；0xFE=11111110B\r\nunsigned char times = 0;     //8位无符号变量并清零，累计50ms中断次数；数到2就清零\r\n\r\nvoid main(void)             //主函数,(1)不返回结果，(2)无参数\r\n{\r\n    P1 = led;               //0xFE送到P1口，低电平有效，P1.0对应LED先亮\r\n\r\n    TMOD = 0x01;            //0000 0001：T0的GATE=0、C/T=0、M1=0、M0=1，方式1(16位计数)。\r\n\r\n    TH0 = 0x4C;             //装入0x4C00的高8位\r\n    TL0 = 0x00;             //装入0x4C00的低8位，计数46080次后溢出，约50ms\r\n    TF0 = 0;                //清除T0已有的溢出标志\r\n\r\n    ET0 = 1;                //允许T0中断\r\n    EA = 1;                 //打开总中断开关，使其可以执行中断服务函数\r\n    TR0 = 1;                //启动T0，硬件按机器周期自动计数\r\n\r\n    while (1)               //条件恒为真，主程序一直循环等待\r\n    {\r\n        //T0在硬件中继续计时，中断允许时，溢出CPU转去处理中断\r\n    }                       //中断处理结束后回到被打断的位置\r\n}                           //主函数结束\r\n\r\n//8051响应T0中断时会硬件清除TF0\r\nvoid Timer0_ISR(void) interrupt 1 //interrupt 1 指定T0中断号\r\n{//T0中断开始\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t//方式1不会自动重装初值\r\n    TH0 = 0x4C;                   //进中断 重新写入高8位\r\n    TL0 = 0x00;                   //重新写入低8位\r\n\r\n    times++;                      //中断次数加1，times=times+1\r\n\r\n    if (times == 2)               //判断是否已累计两次中断，== 表示比较相等。\r\n    {                             //条件成立\r\n        times = 0;                //次数清零,= 表示赋值\r\n\r\n        led = _crol_(led, 1);     //灯型循环左移1位\r\n        P1 = led;                 //新灯型送到P1口\r\n    }\r\n}//中断函数结束，编译器生成中断返回操作，CPU返回原程序继续执行\r\n"</script><script>"use strict";
 const STAGES=[
  {name:"头文件与变量",range:[1,9],lines:[3,4,6,7,9]},
@@ -170,13 +261,27 @@ const importantLines=Object.keys(NOTES).map(Number).sort((a,b)=>a-b);
 let activeModule=0,selectedLine=3,stage=0,traceTimer=null,rotateTimer=null,toastTimer=null;
 const moduleNames=["C51 源代码深度精讲","寄存器与核心知识点","教师提问与答案解析"];
 const readingPositions=[null,null,null];
+const SECTION_LINKS=[
+ [["code","逐行代码精讲"],["trace","代码执行追踪"],["rotation","循环左移专题"],["whatif","修改与故障分析"]],
+ [["registers","寄存器位图"],["calculator","定时初值计算"],["interrupt","中断执行时序"],["memory","考前速记"]],
+ [["questions","教师答辩题"],["exercises","即时自测"]]
+];
+let directoryReturnFocus=null;
 function toast(msg){$("toast").textContent=msg;$("toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2600);}
 function highlight(s){return esc(s).replace(/(#include|&lt;[^&]+?\.h&gt;|\b(?:unsigned|char|void|while|if|interrupt)\b|\b0x[\dA-Fa-f]+\b|\b\d+\b|\b(?:P1|TMOD|TH0|TL0|TF0|ET0|EA|TR0)\b|\b_crol_\b)/g,t=>{let c="key";if(/^0x|^\d/.test(t))c="num";else if(/^(P1|TMOD|TH0|TL0|TF0|ET0|EA|TR0)$/.test(t))c="reg";else if(t==="_crol_")c="fn";return '<span class="tok-'+c+'">'+t+'</span>';});}
 function cleanLine(n){const raw=sourceLines[n-1];let code=raw.split("//")[0].replace(/\t/g,"    ").trimEnd();return code.trim()?code:raw.trim();}
+function codeRow(l,i){
+ if(!l.trim())return '<div class="line-empty" aria-hidden="true"></div>';
+ const n=i+1,k=l.indexOf("//"),code=(k<0?l:l.slice(0,k)).replace(/\t/g,"    ").trimEnd(),comment=k<0?"":l.slice(k).trimEnd();
+ const indent=(code.match(/^ */)||[""])[0].length;
+ let content=code.trim()?'<span class="code-statement">'+highlight(code)+'</span>':"";
+ if(comment)content+='<span class="inline-comment" style="--comment-indent:'+(code.trim()?indent:0)+'ch">'+esc(comment)+'</span>';
+ return '<button class="code-line" id="line-'+n+'" data-line="'+n+'" aria-label="第'+n+'行 '+esc(l.trim())+'"><span class="line-no">'+String(n).padStart(2,"0")+'</span><span class="line-text">'+content+'</span></button>';
+}
 function buildReader(){
  $("rawCode").textContent=ORIGINAL;
  $("stageTabs").innerHTML=STAGES.map((s,i)=>'<button data-stage="'+i+'" aria-pressed="'+(i===0)+'">'+String(i+1).padStart(2,"0")+" / "+s.name+"</button>").join("");
- $("codeScroll").innerHTML=sourceLines.map((l,i)=>{if(!l.trim())return '<div class="line-empty" aria-hidden="true"></div>';const n=i+1;const text=cleanLine(n);return '<button class="code-line" id="line-'+n+'" data-line="'+n+'" aria-label="第'+n+'行 '+esc(text.trim())+'"><span class="line-no">'+String(n).padStart(2,"0")+'</span><span class="line-text">'+(text.startsWith("//")?'<span class="tok-com">'+esc(text)+"</span>":highlight(text))+"</span></button>";}).join("");
+ $("codeScroll").innerHTML=sourceLines.map(codeRow).join("");
  $("codeScroll").addEventListener("click",e=>{const b=e.target.closest("[data-line]");if(b)selectLine(+b.dataset.line);});
  $("stageTabs").addEventListener("click",e=>{const b=e.target.closest("[data-stage]");if(!b)return;stage=+b.dataset.stage;selectLine(STAGES[stage].lines[0]);});
  selectLine(3);
@@ -213,12 +318,13 @@ async function copyOriginal(){
 function navigate(i,target=null){
  if(i<0||i>2)return;
  if(i!==activeModule){
-  const current=$("module"+activeModule);readingPositions[activeModule]=Math.max(0,window.scrollY-(current.getBoundingClientRect().top+window.scrollY));
+  const current=$("module"+activeModule);readingPositions[activeModule]=window.scrollY-(current.getBoundingClientRect().top+window.scrollY);
   pauseTrace();activeModule=i;
   for(let j=0;j<3;j++)$("module"+j).hidden=j!==i;
   $$("[data-module]").forEach(b=>{const on=+b.dataset.module===i;b.classList.toggle("active",on);if(on)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");});
   $("module"+i).classList.remove("entering");void $("module"+i).offsetWidth;$("module"+i).classList.add("entering");
   $("currentModule").textContent="正在阅读："+moduleNames[i];$("footerModule").textContent="0"+(i+1)+" / "+moduleNames[i];
+  $("mobileModuleLabel").textContent="0"+(i+1)+" "+moduleNames[i];
   $("prevModule").disabled=i===0;$("nextModule").disabled=i===2;
   const top=$("module"+i).getBoundingClientRect().top+window.scrollY;
   window.scrollTo({top:Math.max(0,top+(readingPositions[i]??0)),behavior:"instant"});
@@ -227,7 +333,23 @@ function navigate(i,target=null){
  else if(readingPositions[i]===null)$("module"+i).scrollIntoView({block:"start",behavior:"instant"});
  updateProgress();
 }
-function updateProgress(){const a=$("module"+activeModule),top=a.getBoundingClientRect().top+window.scrollY;const available=a.offsetHeight-window.innerHeight+105;const p=Math.max(0,Math.min(100,Math.round((window.scrollY-top+105)/Math.max(1,available)*100)));$("readProgress").textContent="本模块 "+p+"%";$("progressFill").style.width=p+"%";}
+function updateProgress(){const a=$("module"+activeModule),top=a.getBoundingClientRect().top+window.scrollY;const inset=window.matchMedia("(max-width:760px)").matches?64:24;const available=a.offsetHeight-window.innerHeight+inset;const p=Math.max(0,Math.min(100,Math.round((window.scrollY-top+inset)/Math.max(1,available)*100)));$("readProgress").textContent="本模块 "+p+"%";$("progressFill").style.width=p+"%";$("mobileReadProgress").textContent=p+"%";$("mobileProgressFill").style.width=p+"%";}
+function buildDirectory(){
+ $("contentsList").innerHTML=moduleNames.map((name,i)=>'<section class="contents-group"><button class="contents-module" data-directory-module="'+i+'"><span class="mono">0'+(i+1)+'</span> '+name+'</button><div class="contents-links">'+SECTION_LINKS[i].map(([anchor,label])=>'<button data-directory-anchor="'+anchor+'" data-directory-index="'+i+'">'+label+' <span aria-hidden="true">↗</span></button>').join("")+'</div>'+(i===0?'<details class="contents-stages"><summary>按程序阶段学习</summary>'+STAGES.map((s,j)=>'<button data-directory-stage="'+j+'">0'+(j+1)+' / '+s.name+'</button>').join("")+'</details>':"")+'</section>').join("");
+}
+function openDirectory(){
+ if(!$("contentsBackdrop").hidden)return;
+ directoryReturnFocus=document.activeElement;
+ $("contentsBackdrop").hidden=false;document.body.classList.add("directory-open");
+ ["contentsToggle","mobileContents"].forEach(id=>$(id).setAttribute("aria-expanded","true"));
+ $("contentsClose").focus();
+}
+function closeDirectory(restoreFocus=true){
+ if($("contentsBackdrop").hidden)return;
+ $("contentsBackdrop").hidden=true;document.body.classList.remove("directory-open");
+ ["contentsToggle","mobileContents"].forEach(id=>$(id).setAttribute("aria-expanded","false"));
+ if(restoreFocus)directoryReturnFocus?.focus({preventScroll:true});
+}
 class TimerModel{
  constructor(){this.reset();}
  reset(){this.s={led:254,p1:255,times:0,tmod:0,counter:0,tf0:0,et0:0,ea:0,tr0:0,irq:0,overflows:0,completed:0,progress:0,cpu:"初始化前",pending:false,initDone:false};this.events=0;this.last=null;this.queue=["gLed","gTimes","main","p1","mode","high","low","clear","enable","all","run","loop"];this.history=[];}
@@ -399,6 +521,24 @@ function answerQuiz(button){
 }
 function checkCode(button){const c=button.closest(".exercise"),text=c.querySelector("input").value.replace(/\s+/g,"");const good=text==="led=_cror_(led,1);";c.querySelector(".feedback").textContent=good?"✓ _cror_循环右移1位：0xFE→0x7F；随后仍要执行P1=led。":"目标语句为 led = _cror_(led, 1);。使用循环右移返回值，赋回led，并用分号结束。";}
 function bind(){
+ $("contentsToggle").onclick=openDirectory;$("mobileContents").onclick=openDirectory;$("contentsClose").onclick=()=>closeDirectory();
+ $("contentsBackdrop").onclick=e=>{if(e.target===$("contentsBackdrop"))closeDirectory();};
+ $("contentsList").onclick=e=>{
+  const stageButton=e.target.closest("[data-directory-stage]"),anchorButton=e.target.closest("[data-directory-anchor]"),moduleButton=e.target.closest("[data-directory-module]");
+  if(stageButton){closeDirectory(false);const index=+stageButton.dataset.directoryStage;navigate(0,"code");setView(false);selectLine(STAGES[index].lines[0]);}
+  else if(anchorButton){closeDirectory(false);navigate(+anchorButton.dataset.directoryIndex,anchorButton.dataset.directoryAnchor);}
+  else if(moduleButton){closeDirectory(false);navigate(+moduleButton.dataset.directoryModule);}
+ };
+ document.addEventListener("keydown",e=>{
+  if($("contentsBackdrop").hidden)return;
+  if(e.key==="Escape"){e.preventDefault();closeDirectory();}
+  if(e.key==="Tab"){
+   const items=Array.from($("contentsBackdrop").querySelectorAll('button,summary,a[href]')).filter(b=>b.getClientRects().length);
+   if(!items.length)return;const first=items[0],last=items[items.length-1];
+   if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+   else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  }
+ });
  $$("[data-module]").forEach(b=>b.addEventListener("click",()=>navigate(+b.dataset.module)));
  $("prevModule").onclick=()=>navigate(activeModule-1);$("nextModule").onclick=()=>navigate(activeModule+1);$("prevModule").disabled=true;
  $("studyView").onclick=()=>setView(false);$("rawView").onclick=()=>setView(true);$("copyCode").onclick=copyOriginal;
@@ -429,6 +569,7 @@ function bind(){
 }
 function init(){
  buildReader();
+ buildDirectory();
  $("ledBoard").innerHTML=Array.from({length:8},(_,i)=>'<div class="led-cell"><span class="led-dot"></span><small>P1.'+i+'</small><b>1</b></div>').join("")+'<span class="light-trail" id="lightTrail" hidden></span>';
  $("flowStrip").innerHTML=flowNames.map((a,i)=>'<span class="flow-chip" data-flow="'+i+'" data-kind="'+a[1]+'">'+String(i+1).padStart(2,"0")+" "+a[0]+"</span>").join("");
  $("scenarioSelect").innerHTML=SCENARIOS.map(s=>'<option value="'+s.id+'">'+s.label+"</option>").join("");
